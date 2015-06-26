@@ -108,6 +108,10 @@
 #define HAVE_C___TYPEOF__ (__GNUC__)
 #endif
 
+#ifndef HAVE_C_STATEMENT_EXPRESSION
+#define HAVE_C_STATEMENT_EXPRESSION (__GNUC__)
+#endif
+
 #ifndef HAVE___BUILTIN_TRAP
 #define HAVE___BUILTIN_TRAP (GNUC_PREPREQ(3,3,0) || has_builtin(__builtin_trap))
 #endif
@@ -205,6 +209,15 @@
 #define HAVE_MACH_MACH_TIME_H (has_include(<mach/mach_time.h>) || (!HAVE_C___HAS_INCLUDE && defined __APPLE__))
 #endif
 
+#ifndef HAVE_PORT_H
+#define HAVE_PORT_H (has_include(<port.h>) || (!HAVE_C___HAS_INCLUDE && SUNOS_PREREQ(5,10)))
+#endif
+
+#ifndef HAVE_SYS_AUXV_H
+#define HAVE_SYS_AUXV_H_ (GLIBC_PREREQ(2,16) || (!GLIBC_PREREQ(0,0) && defined __linux))
+#define HAVE_SYS_AUXV_H (has_include(<sys/auxv.h>) || (!HAVE_C___HAS_INCLUDE && HAVE_SYS_AUXV_H_))
+#endif
+
 #ifndef HAVE_SYS_EPOLL_H
 #define HAVE_SYS_EPOLL_H (has_include(<sys/epoll.h>) || (!HAVE_C___HAS_INCLUDE && defined __linux))
 #endif
@@ -254,12 +267,30 @@
 
 
 /*
+ * D E C L A R A T I O N  D E T E C T I O N
+ *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+#ifndef HAVE___DECL_LIBC_ENABLE_SECURE
+#define HAVE___DECL_LIBC_ENABLE_SECURE 0
+#endif
+
+#ifndef HAVE_DECL_PROGRAM_INVOCATION_SHORT_NAME
+#define HAVE_DECL_PROGRAM_INVOCATION_SHORT_NAME (defined __linux && _GNU_SOURCE)
+#endif
+
+#ifndef HAVE_DECL_PTHREAD_MUTEX_ROBUST
+#define HAVE_DECL_PTHREAD_MUTEX_ROBUST (defined PTHREAD_MUTEX_ROBUST || GLIBC_PREREQ(2,12))
+#endif
+
+
+/*
  * V A R I A B L E  D E T E C T I O N
  * 
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifndef HAVE__LIBC_ENABLE_SECURE
-#define HAVE__LIBC_ENABLE_SECURE GLIBC_PREREQ(2,1) /* added to glibc between 2.0.98 and 2.0.99 */
+#ifndef HAVE___LIBC_ENABLE_SECURE
+#define HAVE___LIBC_ENABLE_SECURE GLIBC_PREREQ(2,1) /* added to glibc between 2.0.98 and 2.0.99 */
 #endif
 
 #ifndef HAVE_PROGRAM_INVOCATION_SHORT_NAME
@@ -343,7 +374,7 @@
 #endif
 
 #ifndef HAVE_GETAUXVAL
-#define HAVE_GETAUXVAL GLIBC_PREREQ(2,16)
+#define HAVE_GETAUXVAL HAVE_SYS_AUXV_H
 #endif
 
 #ifndef HAVE_GETEXECNAME
@@ -376,6 +407,38 @@
 
 #ifndef HAVE_KQUEUE1
 #define HAVE_KQUEUE1 (HAVE_KQUEUE && NETBSD_PREREQ(6,0,0))
+#endif
+
+#ifndef HAVE_PORT_ALERT
+#define HAVE_PORT_ALERT HAVE_PORT_CREATE
+#endif
+
+#ifndef HAVE_PORT_ASSOCIATE
+#define HAVE_PORT_ASSOCIATE HAVE_PORT_CREATE
+#endif
+
+#ifndef HAVE_PORT_CREATE
+#define HAVE_PORT_CREATE HAVE_PORT_H
+#endif
+
+#ifndef HAVE_PORT_DISASSOCIATE
+#define HAVE_PORT_DISASSOCIATE HAVE_PORT_CREATE
+#endif
+
+#ifndef HAVE_PORT_GET
+#define HAVE_PORT_GET HAVE_PORT_CREATE
+#endif
+
+#ifndef HAVE_PORT_GETN
+#define HAVE_PORT_GETN HAVE_PORT_CREATE
+#endif
+
+#ifndef HAVE_PORT_SEND
+#define HAVE_PORT_SEND HAVE_PORT_CREATE
+#endif
+
+#ifndef HAVE_PORT_SENDN
+#define HAVE_PORT_SENDN HAVE_PORT_CREATE
 #endif
 
 #ifndef HAVE_PIPE2
