@@ -1,5 +1,5 @@
 /* ==========================================================================
- * features.h - Preprocessor-based feature detection
+ * config.h.guess - Preprocessor-based feature detection
  * --------------------------------------------------------------------------
  * Copyright (c) 2015  William Ahern
  *
@@ -23,8 +23,19 @@
  * USE OR OTHER DEALINGS IN THE SOFTWARE.
  * ==========================================================================
  */
-#ifndef FEATURES_H
-#define FEATURES_H
+#ifndef CONFIG_H_GUESS
+#define CONFIG_H_GUESS
+
+/*
+ * A U T O G U E S S  V E R S I O N
+ *
+ * Change AG_VENDOR if maintaining a fork.
+ *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+#define AG_VENDOR  "william+autoguess@25thandClement.com"
+#define AG_VERSION 20150626L
+
 
 /*
  * C O M P I L E R  D E T E C T I O N
@@ -47,10 +58,16 @@
 #define has_extension(...) 0
 #endif
 
-#if defiend __has_include
+#if defined __has_include
 #define has_include(...) __has_include(...)
 #else
 #define has_include(...) 0
+#endif
+
+#if defined __has_builtin
+#define has_builtin(...) __has_builtin(...)
+#else
+#define has_builtin(...) 0
 #endif
 
 
@@ -91,8 +108,12 @@
 #define HAVE_C___TYPEOF__ (__GNUC__)
 #endif
 
+#ifndef HAVE___BUILTIN_TRAP
+#define HAVE___BUILTIN_TRAP (GNUC_PREPREQ(3,3,0) || has_builtin(__builtin_trap))
+#endif
+
 #ifndef HAVE___BUILTIN_UNREACHABLE
-#define HAVE___BUILTIN_UNREACHABLE (GNUC_PREPREQ(4,5,0) || __clang__)
+#define HAVE___BUILTIN_UNREACHABLE (GNUC_PREPREQ(4,5,0) || has_builtin(__builtin_unreachable))
 #endif
 
 #ifndef HAVE__STATIC_ASSERT
@@ -407,4 +428,4 @@
 #endif
 
 
-#endif /* FEATURES_H */
+#endif /* CONFIG_H_GUESS */
