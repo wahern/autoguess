@@ -126,6 +126,62 @@
 
 
 /*
+ * S Y S T E M  E X T E N S I O N S
+ *
+ * We must set these before including any headers for feature detection.
+ *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+#if AG_USE_SYSTEM_EXTENSIONS
+
+/* Solaris */
+#ifndef __EXTENSIONS__
+#define __EXTENSIONS__
+#endif
+
+/* AIX */
+#ifndef _ALL_SOURCE
+#define _ALL_SOURCE
+#endif
+
+#ifndef _GNU_SOURCE
+#define _GNU_SOURCE
+#endif
+
+/* Solaris */
+#ifndef _POSIX_PTHREAD_SEMANTICS
+#define _POSIX_PTHREAD_SEMANTICS
+#endif
+
+#ifndef _MINIX
+#define _MINIX
+#endif
+
+#endif /* AG_USE_SYSTEM_EXTENSIONS */
+
+#if AG_SYS_LARGEFILE
+
+/* NOTE: BSDs and musl-libc always provide a 64-bit file API */
+
+/* Apple */
+#ifndef _DARWIN_USE_64_BIT_INODE
+#define _DARWIN_USE_64_BIT_INODE
+#endif
+
+/* Solaris and glibc (per Large File Summit recommendation) */
+#ifndef _FILE_OFFSET_BITS
+#define _FILE_OFFSET_BITS 64
+#endif
+
+/* AIX */
+#ifndef _LARGE_FILES
+#define _LARGE_FILES
+#endif
+
+#endif /* AG_SYS_LARGEFILE */
+
+
+/*
  * L I B C  D E T E C T I O N
  *
  * See http://sourceforge.net/p/predef/wiki/Libraries/
