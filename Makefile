@@ -17,10 +17,16 @@ config-guess: config.c $(srcdir)/config.h.guess
 	$(CC) -o $@ config.c -DAG_USE_SYSTEM_EXTENSIONS -DAG_SYS_LARGEFILE
 
 config.c: config.h.auto
+	-@$(RM) $@
 	@cat config.h.auto $(srcdir)/config.h.guess | \
 	sed -ne 's/^.*\(HAVE_[0-9A-Za-z_]*\).*$$/\1/p' | \
 	sort -u | grep -v '_$$' | (cat; printf "STRERROR_R_CHAR_P") | awk ' \
-		BEGIN { print "#include \"config.h\"\n#include <stdio.h>\nint main(void) {"; } \
+		BEGIN { \
+			print "#include \"config.h\""; \
+			print "#include <stdio.h>"; \
+			print "#include <signal.h>"; \
+			print "#include <pthread.h>"; \
+			print "int main(void) {"; } \
 		{ \
 			print "#if "$$1; \
 			print "printf(\""$$1" 1\\n\");"; \

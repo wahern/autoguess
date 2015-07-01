@@ -81,7 +81,7 @@
 #endif
 
 #ifndef HAVE_C___ATTRIBUTE___UNUSED
-#define HAVE_C___ATTRIBUTE___UNUSED (__GNUC__)
+#define HAVE_C___ATTRIBUTE___UNUSED (__GNUC__ || SUNPRO_PREREQ(5,9,0))
 #endif
 
 #ifndef HAVE_C___ATTRIBUTE___VISIBILITY
@@ -109,7 +109,7 @@
 #endif
 
 #ifndef HAVE_C_STATEMENT_EXPRESSION
-#define HAVE_C_STATEMENT_EXPRESSION (__GNUC__)
+#define HAVE_C_STATEMENT_EXPRESSION (__GNUC__ || SUNPRO_PREREQ(5,9,0))
 #endif
 
 #ifndef HAVE___BUILTIN_TRAP
@@ -200,12 +200,13 @@
 
 #ifndef HAVE_SYS_PARAM_H
 #define HAVE_SYS_PARAM_H \
-	(has_include(<sys/param.h>) || defined BSD || defined __GLIBC__ || \
-	 defined __APPLE__ || defined __DragonFly__ || defined __FreeBSD__ || \
-	 defined __NetBSD__ || defined __OpenBSD__ || defined __bsdi__)
+	(has_include(<sys/param.h>) || defined __GLIBC__ || defined __sun || \
+	 defined BSD || defined __APPLE__ || defined __DragonFly__ || \
+	 defined __FreeBSD__ || defined __NetBSD__ || defined __OpenBSD__ || \
+	 defined __bsdi__)
 #endif
 
-#if HAVE_SYS_PARAM_H
+#if HAVE_SYS_PARAM_H && !defined __linux && !defined __sun && !defined _AIX
 #include <sys/param.h> /* __FreeBSD_version __NetBSD_Prereq__ BSD OpenBSD */
 #endif
 
@@ -303,7 +304,7 @@
 #endif
 
 #ifndef HAVE_SYS_AUXV_H
-#define HAVE_SYS_AUXV_H_ (GLIBC_PREREQ(2,16) || (!GLIBC_PREREQ(0,0) && defined __linux))
+#define HAVE_SYS_AUXV_H_ (GLIBC_PREREQ(2,16) || (!GLIBC_PREREQ(0,0) && defined __linux) || defined __sun)
 #define HAVE_SYS_AUXV_H (has_include(<sys/auxv.h>) || (!HAVE_C___HAS_INCLUDE && HAVE_SYS_AUXV_H_))
 #endif
 
@@ -389,7 +390,7 @@
 #endif
 
 #ifndef HAVE_DECL_SYS_SIGLIST
-#define HAVE_DECL_SYS_SIGLIST (!MUSL_MAYBE)
+#define HAVE_DECL_SYS_SIGLIST (!MUSL_MAYBE && !__sun)
 #endif
 
 
@@ -498,7 +499,7 @@
 #endif
 
 #ifndef HAVE_GETAUXVAL
-#define HAVE_GETAUXVAL HAVE_SYS_AUXV_H
+#define HAVE_GETAUXVAL (HAVE_SYS_AUXV_H && !defined __sun)
 #endif
 
 #ifndef HAVE_GETEXECNAME
@@ -506,11 +507,11 @@
 #endif
 
 #ifndef HAVE_GETIFADDRS
-#define HAVE_GETIFADDRS HAVE_IFADDRS_H
+#define HAVE_GETIFADDRS (HAVE_IFADDRS_H && !defined __sun)
 #endif
 
 #ifndef HAVE_GETPROGNAME
-#define HAVE_GETPROGNAME HAVE_ARC4RANDOM
+#define HAVE_GETPROGNAME (HAVE_ARC4RANDOM || SUNOS_PREREQ(5,11))
 #endif
 
 #ifndef HAVE_ISSETUGID
@@ -545,8 +546,8 @@
 #define HAVE_PORT_CREATE HAVE_PORT_H
 #endif
 
-#ifndef HAVE_PORT_DISASSOCIATE
-#define HAVE_PORT_DISASSOCIATE HAVE_PORT_CREATE
+#ifndef HAVE_PORT_DISSOCIATE
+#define HAVE_PORT_DISSOCIATE HAVE_PORT_CREATE
 #endif
 
 #ifndef HAVE_PORT_GET
@@ -570,11 +571,11 @@
 #endif
 
 #ifndef HAVE_POSIX_FADVISE
-#define HAVE_POSIX_FADVISE GLIBC_PREREQ(2,2)
+#define HAVE_POSIX_FADVISE (GLIBC_PREREQ(2,2) || defined __sun)
 #endif
 
 #ifndef HAVE_POSIX_FALLOCATE
-#define HAVE_POSIX_FALLOCATE GLIBC_PREREQ(2,2)
+#define HAVE_POSIX_FALLOCATE (GLIBC_PREREQ(2,2) || defined __sun)
 #endif
 
 #ifndef HAVE_SIGNALFD

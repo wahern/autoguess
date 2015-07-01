@@ -31,9 +31,9 @@ AC_SEARCH_LIBS([dlopen], [dl])
 # Checks for header files.
 AC_CHECK_HEADERS([m4_normalize([
 	dlfcn.h ifaddrs.h mach/mach.h mach/clock.h mach/mach_time.h
-	netinet/in6_var.h sys/auxv.h sys/epoll.h sys/event.h sys/eventfd.h
-	sys/feature_tests.h sys/inotify.h sys/param.h sys/signalfd.h
-	sys/sockio.h sys/sysctl.h sys/timerfd.h
+	netinet/in6_var.h port.h sys/auxv.h sys/epoll.h sys/event.h
+	sys/eventfd.h sys/feature_tests.h sys/inotify.h sys/param.h
+	sys/signalfd.h sys/sockio.h sys/sysctl.h sys/timerfd.h
 ])])
 
 # Checks for structure members
@@ -45,6 +45,7 @@ AC_CHECK_MEMBERS([struct stat.st_atimespec, struct stat.st_mtimespec, struct sta
 AC_CHECK_DECLS([__libc_enable_secure])
 AC_CHECK_FUNCS([__libc_enable_secure])
 AC_CHECK_DECLS([sys_siglist], [], [], [#include <signal.h>])
+AC_CHECK_FUNCS([sys_siglist])
 AC_CHECK_DECLS([program_invocation_short_name], [], [], [#include <errno.h>])
 AC_CHECK_FUNCS([program_invocation_short_name])
 AC_CHECK_DECLS([PTHREAD_MUTEX_ROBUST], [], [], [#include <pthread.h>])
@@ -55,9 +56,10 @@ AC_CHECK_FUNCS([m4_normalize([
 	dlsym dlopen dup2 dup3 fdopendir dup2 dup3 epoll_create
 	epoll_create1 epoll_ctl epoll_wait eventfd getauxval getenv_r
 	getexecname getifaddrs getprogname inotify_init issetugid kevent
-	kqueue kqueue1 pipe2 posix_fadvise posix_fallocate signalfd
-	sigtimedwait sigwait sysctl timerfd_create timerfd_gettime
-	timerfd_settime
+	kqueue kqueue1 pipe2 port_alert port_associate port_create
+	port_dissociate port_get port_getn port_send port_sendn
+	posix_fadvise posix_fallocate signalfd sigtimedwait sigwait sysctl
+	timerfd_create timerfd_gettime timerfd_settime
 ])])
 
 # Check for strerror_r and variant
