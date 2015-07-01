@@ -16,7 +16,7 @@ config-guess: config.c $(srcdir)/config.h.guess
 	cp $(srcdir)/config.h.guess config.h
 	$(CC) -o $@ config.c
 
-config.c:
+config.c: config.h.auto
 	@cat config.h.auto $(srcdir)/config.h.guess | \
 	sed -ne 's/^.*\(HAVE_[0-9A-Za-z_]*\).*$$/\1/p' | \
 	sort -u | grep -v '_$$' | awk ' \
