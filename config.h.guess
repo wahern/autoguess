@@ -53,19 +53,19 @@
 #define SUNPRO_PREREQ(M, m, p) (defined __SUNPRO_C && __SUNPRO_C >= 0x ## M ## m ## p)
 
 #if defined __has_extension
-#define has_extension(...) __has_extension(...)
+#define has_extension(...) __has_extension(__VA_ARGS__)
 #else
 #define has_extension(...) 0
 #endif
 
 #if defined __has_include
-#define has_include(...) __has_include(...)
+#define has_include(...) __has_include(__VA_ARGS__)
 #else
 #define has_include(...) 0
 #endif
 
 #if defined __has_builtin
-#define has_builtin(...) __has_builtin(...)
+#define has_builtin(...) __has_builtin(__VA_ARGS__)
 #else
 #define has_builtin(...) 0
 #endif
@@ -113,11 +113,11 @@
 #endif
 
 #ifndef HAVE___BUILTIN_TRAP
-#define HAVE___BUILTIN_TRAP (GNUC_PREPREQ(3,3,0) || has_builtin(__builtin_trap))
+#define HAVE___BUILTIN_TRAP (GNUC_PREREQ(3,3,0) || has_builtin(__builtin_trap))
 #endif
 
 #ifndef HAVE___BUILTIN_UNREACHABLE
-#define HAVE___BUILTIN_UNREACHABLE (GNUC_PREPREQ(4,5,0) || has_builtin(__builtin_unreachable))
+#define HAVE___BUILTIN_UNREACHABLE (GNUC_PREREQ(4,5,0) || has_builtin(__builtin_unreachable))
 #endif
 
 #ifndef HAVE__STATIC_ASSERT
@@ -223,6 +223,9 @@
 #define FREEBSD_2VER(M, m, p) (((M) * 100000) + ((m) * 1000) + (p))
 #define FREEBSD_PREREQ(M, m, p) (defined __FreeBSD__ && __FreeBSD_version >= FREEBSD_2VER((M), (m), (p)))
 
+#define IPHONE_2VER(M, m) (((M) * 10000) + ((M) * 100))
+#define IPHONE_PREREQ(M, m) (defined __IPHONE_OS_VERSION_MIN_REQUIRED && IPHONE_2VER((M), (m)) <= __IPHONE_OS_VERSION_MIN_REQUIRED)
+
 #define MUSL_MAYBE (defined __linux && !defined __GLIBC__ && !defined __BIONIC__)
 
 #if defined __NetBSD_Prereq__
@@ -230,6 +233,12 @@
 #else
 #define NETBSD_PREREQ(M, m, p) 0
 #endif
+
+#define MACOS_2VER_10_9(M, m, p) (((M) * 100) + ((m) * 10))
+#define MACOS_2VER_10_10(M, m, p) (((M) * 10000) + ((M) * 100) + (p))
+#define MACOS_PREREQ_10_10(M, m, p) (((M) > 10 || ((M) == 10 && (m) >= 10)) && MACOS_2VER_10_10((M), (m), (p)) <= __MAC_OS_X_VERSION_MIN_REQUIRED)
+#define MACOS_PREREQ_10_9(M, m, p) (((M) == 10 && (m) < 10) && MACOS_2VER_10_9((M), (m), (p)) <= __MAC_OS_X_VERSION_MIN_REQUIRED)
+#define MACOS_PREREQ(M, m, p) (defined __MAC_OS_X_VERSION_MIN_REQUIRED && (MACOS_PREREQ_10_10((M), (m), (p)) || MACOS_PREREQ_10_9((M), (m), (p))))
 
 #define SUNOS_PREREQ_5_10 (defined __sun && defined _DTRACE_VERSION)
 #define SUNOS_PREREQ_5_11 (defined __sun && defined F_DUPFD_CLOEXEC)
@@ -249,8 +258,12 @@
 #endif
 
 #ifndef HAVE_IFADDRS_H
-#define HAVE_IFADDRS_H_ (!defined _AIX && (!defined __sun || SUNOS_PREREQ(5,11))
+#define HAVE_IFADDRS_H_ (!defined _AIX && (!defined __sun || SUNOS_PREREQ(5,11)))
 #define HAVE_IFADDRS_H (has_include(<ifaddrs.h>) || (!HAVE_C___HAS_INCLUDE && HAVE_IFADDRS_H_))
+#endif
+
+#ifndef HAVE_INTTYPES_H
+#define HAVE_INTTYPES_H 1
 #endif
 
 #ifndef HAVE_MACH_CLOCK_H
@@ -265,8 +278,28 @@
 #define HAVE_MACH_MACH_TIME_H (has_include(<mach/mach_time.h>) || (!HAVE_C___HAS_INCLUDE && defined __APPLE__))
 #endif
 
+#ifndef HAVE_MEMORY_H
+#define HAVE_MEMORY_H 1
+#endif
+
 #ifndef HAVE_PORT_H
 #define HAVE_PORT_H (has_include(<port.h>) || (!HAVE_C___HAS_INCLUDE && SUNOS_PREREQ(5,10)))
+#endif
+
+#ifndef HAVE_STDINT_H
+#define HAVE_STDINT_H 1
+#endif
+
+#ifndef HAVE_STDLIB_H
+#define HAVE_STDLIB_H 1
+#endif
+
+#ifndef HAVE_STRING_H
+#define HAVE_STRING_H 1
+#endif
+
+#ifndef HAVE_STRINGS_H
+#define HAVE_STRINGS_H 1
 #endif
 
 #ifndef HAVE_SYS_AUXV_H
@@ -302,6 +335,10 @@
 #define HAVE_SYS_SOCKIO_H (has_include(<sys/sockio.h>) || (!HAVE_C___HAS_INCLUDE && defined __sun))
 #endif
 
+#ifndef HAVE_SYS_STAT_H
+#define HAVE_SYS_STAT_H 1
+#endif
+
 #ifndef HAVE_SYS_SYSCTL_H
 #define HAVE_SYS_SYSCTL_H_ (defined BSD || defined __GLIBC__)
 #define HAVE_SYS_SYSCTL_H (has_include(<sys/sysctl.h>) || (!HAVE_C___HAS_INCLUDE && HAVE_SYS_SYSCTL_H_))
@@ -309,6 +346,14 @@
 
 #ifndef HAVE_SYS_TIMERFD_H
 #define HAVE_SYS_TIMERFD_H (has_include(<sys/timerfd.h>) || (!HAVE_C___HAS_INCLUDE && defined __linux))
+#endif
+
+#ifndef HAVE_SYS_TYPES_H
+#define HAVE_SYS_TYPES_H 1
+#endif
+
+#ifndef HAVE_UNISTD_H
+#define HAVE_UNISTD_H 1
 #endif
 
 
@@ -337,6 +382,14 @@
 
 #ifndef HAVE_DECL_PTHREAD_MUTEX_ROBUST
 #define HAVE_DECL_PTHREAD_MUTEX_ROBUST (defined PTHREAD_MUTEX_ROBUST || GLIBC_PREREQ(2,12))
+#endif
+
+#ifndef HAVE_DECL_STRERROR_R
+#define HAVE_DECL_STRERROR_R 1
+#endif
+
+#ifndef HAVE_DECL_SYS_SIGLIST
+#define HAVE_DECL_SYS_SIGLIST (!MUSL_MAYBE)
 #endif
 
 
@@ -389,12 +442,19 @@
 #define HAVE_DLSYM HAVE_DLOPEN
 #endif
 
+#ifndef HAVE_DUP2
+#define HAVE_DUP2 1
+#endif
+
 #ifndef HAVE_DUP3
-#define HAVE_DUP3 (GLIBC_PREREQ(2,9) || FREEBSD_PREREQ(10,0) || NETBSD_PREREQ(6,0) || UCLIBC_PREREQ(0,9,34) || MUSL_MAYBE || __BIONIC__)
+#define HAVE_DUP3 (GLIBC_PREREQ(2,9) || FREEBSD_PREREQ(10,0,0) || NETBSD_PREREQ(6,0,0) || UCLIBC_PREREQ(0,9,34) || MUSL_MAYBE || __BIONIC__)
 #endif
 
 #ifndef HAVE_FDOPENDIR
-#define HAVE_FDOPENDIR (!defined __APPLE__ && (!defined __NetBSD__ || NETBSD_PREREQ(6,0)))
+#define HAVE_FDOPENDIR ( \
+	(!defined __APPLE__ || MACOS_PREREQ(10,10,0) || IPHONE_PREREQ(8,0)) \
+	&& (!defined __NetBSD__ || NETBSD_PREREQ(6,0,0)) \
+)
 #endif
 
 #ifndef HAVE_EPOLL_CREATE
@@ -498,7 +558,7 @@
 #endif
 
 #ifndef HAVE_PIPE2
-#define HAVE_PIPE2 (GLIBC_PREREQ(2,9) || FREEBSD_PREREQ(10,0) || NETBSD_PREREQ(6,0) || UCLIBC_PREREQ(0,9,32) || MUSL_MAYBE || __BIONIC__)
+#define HAVE_PIPE2 (GLIBC_PREREQ(2,9) || FREEBSD_PREREQ(10,0,0) || NETBSD_PREREQ(6,0,0) || UCLIBC_PREREQ(0,9,32) || MUSL_MAYBE || __BIONIC__)
 #endif
 
 #ifndef HAVE_POSIX_FADVISE
@@ -528,6 +588,11 @@
 #define HAVE_STATIC_ASSERT 0 /* glibc doesn't check GCC version */
 #else
 #define HAVE_STATIC_ASSERT (defined static_assert)
+#endif
+#endif
+
+#ifndef HAVE_STRERROR_R
+#define HAVE_STRERROR_R 1
 #endif
 
 #ifndef HAVE_SYSCTL
