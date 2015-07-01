@@ -2,10 +2,10 @@ srcdir=.
 
 all: config-auto config-guess
 
-$(srcdir)/config.h.auto.in: $(srcdir)/configure.ac
+$(srcdir)/config.h.auto.in $(srcdir)/configure: $(srcdir)/configure.ac
 	cd $(srcdir) && ./bootstrap
 
-config.h.auto: $(srcdir)/config.h.auto.in
+config.h.auto: $(srcdir)/config.h.auto.in $(srcdir)/configure
 	$(srcdir)/configure
 
 config-auto: config.c config.h.auto
@@ -14,12 +14,12 @@ config-auto: config.c config.h.auto
 
 config-guess: config.c $(srcdir)/config.h.guess
 	cp $(srcdir)/config.h.guess config.h
-	$(CC) -o $@ config.c
+	$(CC) -o $@ config.c -DAG_USE_SYSTEM_EXTENSIONS -DAG_SYS_LARGEFILE
 
 config.c: config.h.auto
 	@cat config.h.auto $(srcdir)/config.h.guess | \
 	sed -ne 's/^.*\(HAVE_[0-9A-Za-z_]*\).*$$/\1/p' | \
-	sort -u | grep -v '_$$' | awk ' \
+	sort -u | grep -v '_$$' | (cat; printf "STRERROR_R_CHAR_P") | awk ' \
 		BEGIN { print "#include \"config.h\"\n#include <stdio.h>\nint main(void) {"; } \
 		{ \
 			print "#if "$$1; \

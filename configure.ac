@@ -29,11 +29,12 @@ AC_SEARCH_LIBS([posix_fallocate], [rt])
 AC_SEARCH_LIBS([dlopen], [dl])
 
 # Checks for header files.
-AC_CHECK_HEADERS([ \
-	dlfcn.h ifaddrs.h mach/mach.h mach/clock.h mach/mach_time.h \
-	netinet/in6_var.h sys/event.h sys/feature_tests.h sys/param.h \
-	sys/sockio.h sys/sysctl.h \
-])
+AC_CHECK_HEADERS([m4_normalize([
+	dlfcn.h ifaddrs.h mach/mach.h mach/clock.h mach/mach_time.h
+	netinet/in6_var.h sys/auxv.h sys/epoll.h sys/event.h sys/eventfd.h
+	sys/feature_tests.h sys/inotify.h sys/param.h sys/signalfd.h
+	sys/sockio.h sys/sysctl.h sys/timerfd.h
+])])
 
 # Checks for structure members
 AC_CHECK_MEMBERS([struct stat.st_rdev, struct stat.st_blksize, struct stat.st_blocks])
@@ -41,17 +42,23 @@ AC_CHECK_MEMBERS([struct stat.st_atim, struct stat.st_mtim, struct stat.st_ctim]
 AC_CHECK_MEMBERS([struct stat.st_atimespec, struct stat.st_mtimespec, struct stat.st_ctimespec])
 
 # Checks for library objects.
-AC_CHECK_DECLS([sys_siglist], [], [], [[#include <signal.h>]])
 AC_CHECK_DECLS([__libc_enable_secure])
-AC_CHECK_DECLS([program_invocation_short_name])
+AC_CHECK_FUNCS([__libc_enable_secure])
+AC_CHECK_DECLS([sys_siglist], [], [], [#include <signal.h>])
+AC_CHECK_DECLS([program_invocation_short_name], [], [], [#include <errno.h>])
+AC_CHECK_FUNCS([program_invocation_short_name])
+AC_CHECK_DECLS([PTHREAD_MUTEX_ROBUST], [], [], [#include <pthread.h>])
 
 # Checks for library functions.
-AC_CHECK_FUNCS([ \
-	arc4random arc4random_addrandom arc4random_stir clock_gettime dladdr \
-	dlsym dlopen dup2 dup3 fdopendir dup2 dup3 getauxval getenv_r \
-	getexecname getifaddrs getprogname issetugid kevent kqueue kqueue1 \
-	pipe2 posix_fadvise posix_fallocate sigtimedwait sigwait sysctl \
-])
+AC_CHECK_FUNCS([m4_normalize([
+	arc4random arc4random_addrandom arc4random_stir clock_gettime dladdr
+	dlsym dlopen dup2 dup3 fdopendir dup2 dup3 epoll_create
+	epoll_create1 epoll_ctl epoll_wait eventfd getauxval getenv_r
+	getexecname getifaddrs getprogname inotify_init issetugid kevent
+	kqueue kqueue1 pipe2 posix_fadvise posix_fallocate signalfd
+	sigtimedwait sigwait sysctl timerfd_create timerfd_gettime
+	timerfd_settime
+])])
 
 # Check for strerror_r and variant
 AC_FUNC_STRERROR_R
@@ -149,6 +156,14 @@ AC_LINK_IFELSE([AC_LANG_PROGRAM([],[__builtin_unreachable()])], [
 AC_MSG_CHECKING([for _Static_assert])
 AC_LINK_IFELSE([AC_LANG_PROGRAM([],[_Static_assert(1, "OK")])], [
 	AC_DEFINE([HAVE__STATIC_ASSERT], [1], [Define to 1 if compiler supports _Static_assert])
+	AC_MSG_RESULT([yes])
+], [
+	AC_MSG_RESULT([no])
+])
+
+AC_MSG_CHECKING([for static_assert])
+AC_LINK_IFELSE([AC_LANG_PROGRAM([#include <assert.h>],[static_assert(1, "OK")])], [
+	AC_DEFINE([HAVE_STATIC_ASSERT], [1], [Define to 1 if compiler supports static_assert])
 	AC_MSG_RESULT([yes])
 ], [
 	AC_MSG_RESULT([no])

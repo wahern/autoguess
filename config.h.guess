@@ -377,7 +377,7 @@
 #endif
 
 #ifndef HAVE_DECL_PROGRAM_INVOCATION_SHORT_NAME
-#define HAVE_DECL_PROGRAM_INVOCATION_SHORT_NAME (defined __linux && _GNU_SOURCE)
+#define HAVE_DECL_PROGRAM_INVOCATION_SHORT_NAME (defined __linux && defined _GNU_SOURCE)
 #endif
 
 #ifndef HAVE_DECL_PTHREAD_MUTEX_ROBUST
@@ -430,8 +430,12 @@
 #define HAVE_ARC4RANDOM_STIR HAVE_ARC4RANDOM_ADDRANDOM
 #endif
 
+#ifndef HAVE_CLOCK_GETTIME
+#define HAVE_CLOCK_GETTIME (!defined __APPLE__)
+#endif
+
 #ifndef HAVE_DLADDR
-#define HAVE_DLADDR (HAVE_DLOPEN && !defined _AIX && ((!__GLIBC__ && !MUSL_MAYBE) || _GNU_SOURCE))
+#define HAVE_DLADDR (HAVE_DLOPEN && !defined _AIX && ((!__GLIBC__ && !MUSL_MAYBE) || defined _GNU_SOURCE))
 #endif
 
 #ifndef HAVE_DLOPEN
@@ -459,6 +463,10 @@
 
 #ifndef HAVE_EPOLL_CREATE
 #define HAVE_EPOLL_CREATE HAVE_SYS_EPOLL_H
+#endif
+
+#if HAVE_SYS_EPOLL_H
+#include <sys/epoll.h>
 #endif
 
 #ifndef HAVE_EPOLL_CREATE1
@@ -612,7 +620,7 @@
 #endif
 
 #ifndef STRERROR_R_CHAR_P
-#define STRERROR_R_CHAR_P ((GLIBC_PREREQ(0,0) || UCLIBC_PREREQ(0,0,0)) && (_GNU_SOURCE || !(_POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600)))
+#define STRERROR_R_CHAR_P ((GLIBC_PREREQ(0,0) || UCLIBC_PREREQ(0,0,0)) && (defined _GNU_SOURCE || !(_POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600)))
 #endif
 
 
