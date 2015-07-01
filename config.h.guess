@@ -571,11 +571,11 @@
 #endif
 
 #ifndef HAVE_POSIX_FADVISE
-#define HAVE_POSIX_FADVISE (GLIBC_PREREQ(2,2) || defined __sun || MUSL_MAYBE)
+#define HAVE_POSIX_FADVISE (defined POSIX_FADV_NORMAL || GLIBC_PREREQ(2,2) || defined __sun || MUSL_MAYBE || FREEBSD_PREREQ(9,0,0))
 #endif
 
 #ifndef HAVE_POSIX_FALLOCATE
-#define HAVE_POSIX_FALLOCATE (GLIBC_PREREQ(2,2) || defined __sun || MUSL_MAYBE)
+#define HAVE_POSIX_FALLOCATE (GLIBC_PREREQ(2,2) || defined __sun || MUSL_MAYBE || FREEBSD_PREREQ(9,0,0))
 #endif
 
 #ifndef HAVE_SIGNALFD
@@ -589,8 +589,6 @@
 #ifndef HAVE_SIGWAIT
 #define HAVE_SIGWAIT (!defined __minix)
 #endif
-
-#include <assert.h> /* static_assert */
 
 #ifndef HAVE_STATIC_ASSERT
 #if GNUC_PREREQ(0,0,0) && !GNUC_PREREQ(4,6,0)
