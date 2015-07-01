@@ -34,7 +34,7 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #define AG_VENDOR  "william+autoguess@25thandClement.com"
-#define AG_VERSION 20150626L
+#define AG_VERSION 20150701L
 
 
 /*
@@ -515,6 +515,10 @@
 
 #ifndef HAVE_SIGTIMEDWAIT
 #define HAVE_SIGTIMEDWAIT (!defined __APPLE__ && !defined __OpenBSD__)
+#endif
+
+#ifndef HAVE_SIGWAIT
+#define HAVE_SIGWAIT (!defined __minix)
 #endif
 
 #include <assert.h> /* static_assert */
