@@ -35,6 +35,12 @@ config-auto.txt config-guess.txt: config-auto config-guess
 	./$(@:.txt=) > $@
 
 check: config-auto.txt config-guess.txt
+	@if cmp -s config-auto.txt config-guess.txt; then \
+		printf "OK\n"; \
+	else \
+		diff -u config-auto.txt config-guess.txt; \
+		exit 1; \
+	fi
 
 clean:
 	$(RM) *.txt config.c config.h config-auto config-guess
