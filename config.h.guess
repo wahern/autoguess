@@ -324,10 +324,6 @@
 #define HAVE_SYS_INOTIFY_H (has_include(<sys/inotify.h>) || (!HAVE_C___HAS_INCLUDE && defined __linux))
 #endif
 
-#ifndef HAVE_SYS_PROCFS_H
-#define HAVE_SYS_PROCFS_H (has_include(<sys/procfs.h>) || (!HAVE_C___HAS_INCLUDE && defined _AIX))
-#endif
-
 #ifndef HAVE_SYS_SIGNALFD_H
 #define HAVE_SYS_SIGNALFD_H (has_include(<sys/signalfd.h>) || (!HAVE_C___HAS_INCLUDE && defined __linux))
 #endif
@@ -519,7 +515,7 @@
 #endif
 
 #ifndef HAVE_ISSETUGID
-#define HAVE_ISSETUGID (!defined __linux && !defined _AIX)
+#define HAVE_ISSETUGID ((!defined __linux || (MUSL_MAYBE && defined _GNU_SOURCE)) && !defined _AIX)
 #endif
 
 #if HAVE_SYS_EVENT_H
@@ -575,11 +571,11 @@
 #endif
 
 #ifndef HAVE_POSIX_FADVISE
-#define HAVE_POSIX_FADVISE (GLIBC_PREREQ(2,2) || defined __sun)
+#define HAVE_POSIX_FADVISE (GLIBC_PREREQ(2,2) || defined __sun || MUSL_MAYBE)
 #endif
 
 #ifndef HAVE_POSIX_FALLOCATE
-#define HAVE_POSIX_FALLOCATE (GLIBC_PREREQ(2,2) || defined __sun)
+#define HAVE_POSIX_FALLOCATE (GLIBC_PREREQ(2,2) || defined __sun || MUSL_MAYBE)
 #endif
 
 #ifndef HAVE_SIGNALFD
