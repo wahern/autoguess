@@ -407,6 +407,10 @@
 #define HAVE_PROGRAM_INVOCATION_SHORT_NAME (defined __linux)
 #endif
 
+#ifndef HAVE_SYS_SIGLIST
+#define HAVE_SYS_SIGLIST HAVE_DECL_SYS_SIGLIST
+#endif
+
 
 /*
  * F U N C T I O N  D E T E C T I O N
