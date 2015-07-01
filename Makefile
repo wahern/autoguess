@@ -49,5 +49,5 @@ check: config-auto.txt config-guess.txt
 	fi
 
 clean:
-	$(RM) *.txt config.c config.h config-auto config-guess
+	$(RM) *.txt config.c config.h config.h.auto config-auto config-guess
 
