@@ -1,7 +1,40 @@
 AC_DEFUN([AG_CHECK_CC], [
 
+#
+# NOTE: Solaris Studio 12.4 supports the __has_attribute test macro. If
+# available we defer to its judgment so we match the result of
+# config.h.guess. Otherwise the test might succeed in some of these cases
+# because Solaris Studio understands the construct but doesn't actually
+# implement the semantics.
+#
+AC_MSG_CHECKING([for __attribute__((constructor)) support])
+AC_LINK_IFELSE([
+	AC_LANG_PROGRAM([
+		#if defined __has_attribute
+		#if !(__has_attribute(constructor))
+		#error nope
+		#endif
+		#endif
+		int f(void *p) __attribute__((constructor));
+	], [return 0;])
+], [
+	AC_DEFINE([HAVE_C___ATTRIBUTE___CONSTRUCTOR], [1], [Define to 1 if compiler supports __attribute__((constructor))])
+	AC_MSG_RESULT([yes])
+], [
+	AC_MSG_RESULT([no])
+])
+
 AC_MSG_CHECKING([for __attribute__((nonnull)) support])
-AC_LINK_IFELSE([AC_LANG_PROGRAM([int f(void *p) __attribute__((nonnull (1)));], [return 0;])], [
+AC_LINK_IFELSE([
+	AC_LANG_PROGRAM([
+		#if defined __has_attribute
+		#if !(__has_attribute(nonnull))
+		#error nope
+		#endif
+		#endif
+		int f(void *p) __attribute__((nonnull (1)));
+	], [return 0;])
+], [
 	AC_DEFINE([HAVE_C___ATTRIBUTE___NONNULL], [1], [Define to 1 if compiler supports __attribute__((nonnull))])
 	AC_MSG_RESULT([yes])
 ], [
@@ -9,15 +42,52 @@ AC_LINK_IFELSE([AC_LANG_PROGRAM([int f(void *p) __attribute__((nonnull (1)));], 
 ])
 
 AC_MSG_CHECKING([for __attribute__((unused)) support])
-AC_LINK_IFELSE([AC_LANG_PROGRAM([],[int i __attribute__((unused));])], [
+AC_LINK_IFELSE([
+	AC_LANG_PROGRAM([
+		#if defined __has_attribute
+		#if !(__has_attribute(unused))
+		#error nope
+		#endif
+		#endif
+	],[
+		int i __attribute__((unused));
+	])
+], [
 	AC_DEFINE([HAVE_C___ATTRIBUTE___UNUSED], [1], [Define to 1 if compiler supports __attribute__((unused))])
 	AC_MSG_RESULT([yes])
 ], [
 	AC_MSG_RESULT([no])
 ])
 
+AC_MSG_CHECKING([for __attribute__((used)) support])
+AC_LINK_IFELSE([
+	AC_LANG_PROGRAM([
+		#if defined __has_attribute
+		#if !(__has_attribute(used))
+		#error nope
+		#endif
+		#endif
+	],[
+		int i __attribute__((used));
+	])
+], [
+	AC_DEFINE([HAVE_C___ATTRIBUTE___USED], [1], [Define to 1 if compiler supports __attribute__((used))])
+	AC_MSG_RESULT([yes])
+], [
+	AC_MSG_RESULT([no])
+])
+
 AC_MSG_CHECKING([for __attribute__((visibility)) support])
-AC_LINK_IFELSE([AC_LANG_PROGRAM([int i __attribute__((visibility("hidden")));], [])], [
+AC_LINK_IFELSE([
+	AC_LANG_PROGRAM([
+		#if defined __has_attribute
+		#if !(__has_attribute(visibility))
+		#error nope
+		#endif
+		#endif
+		int i __attribute__((visibility("hidden")));
+	], [])
+], [
 	AC_DEFINE([HAVE_C___ATTRIBUTE___VISIBILITY], [1], [Define to 1 if compiler supports __attribute__((visibility))])
 	AC_MSG_RESULT([yes])
 ], [

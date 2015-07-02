@@ -62,15 +62,21 @@
  * will only use arithmetic operations, but if this is not possible then the
  * test must be written inline, for example
  *
- * 	# if has_attribute(x) || (!HAVE_C____HAS_ATTRIBUTE && defined FOO)
+ * 	#if has_attribute(x) || (!HAVE_C___HAS_ATTRIBUTE && defined FOO)
  * 	#define HAVE___ATTRIBUTE___X
  * 	#endif
+ *
+ * NOTE: Solaris Studio 12.4 supports __has_attribute, but we must enclose
+ * it in parentheses because the expansion results in a token sequence that
+ * chokes the compiler: __has_attribute(nonnull) becomes 
+ * __has_attribute__ (nonnull), with a literal space between the preprocessor
+ * identifier and the open paranthesis.
  *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #if defined __has_attribute
 #define has_attribute(a) __has_attribute(a)
-#define test_attribute(a, E) has_attribute(a)
+#define test_attribute(a, E) (has_attribute(a))
 #else
 #define has_attribute(a) 0
 #define test_attribute(a, E) (E)
@@ -78,7 +84,7 @@
 
 #if defined __has_extension
 #define has_extension(x) __has_extension(x)
-#define test_extension(x, E) has_extension(x)
+#define test_extension(x, E) (has_extension(x))
 #else
 #define has_extension(x) 0
 #define test_extension(x, E) (E)
@@ -86,7 +92,7 @@
 
 #if defined __has_include
 #define has_include(p) __has_include(p)
-#define test_include(p, E) has_include(p)
+#define test_include(p, E) (has_include(p))
 #else
 #define has_include(p) 0
 #define test_include(p, E) (E)
@@ -94,7 +100,7 @@
 
 #if defined __has_builtin
 #define has_builtin(f) __has_builtin(f)
-#define test_builtin(f, E) has_builtin(f)
+#define test_builtin(f, E) (has_builtin(f))
 #else
 #define has_builtin(f) 0
 #define test_builtin(f, E) (E)
@@ -104,16 +110,24 @@
 #define HAVE_C___ATTRIBUTE__ (__GNUC__)
 #endif
 
+#ifndef HAVE_C___ATTRIBUTE___CONSTRUCTOR
+#define HAVE_C___ATTRIBUTE___CONSTRUCTOR test_attribute(constructor, __GNUC__)
+#endif
+
 #ifndef HAVE_C___ATTRIBUTE___NONNULL
 #define HAVE_C___ATTRIBUTE___NONNULL test_attribute(nonnull, GNUC_PREREQ(3,3,1))
 #endif
 
 #ifndef HAVE_C___ATTRIBUTE___UNUSED
-#define HAVE_C___ATTRIBUTE___UNUSED test_attribute(unused, (__GNUC__ || SUNPRO_PREREQ(5,9,0)))
+#define HAVE_C___ATTRIBUTE___UNUSED test_attribute(unused, __GNUC__)
+#endif
+
+#ifndef HAVE_C___ATTRIBUTE___USED
+#define HAVE_C___ATTRIBUTE___USED test_attribute(used, __GNUC__)
 #endif
 
 #ifndef HAVE_C___ATTRIBUTE___VISIBILITY
-#define HAVE_C___ATTRIBUTE___VISIBILITY test_attribute(visibility, (__GNUC__ || SUNPRO_PREREQ(5,9,0)))
+#define HAVE_C___ATTRIBUTE___VISIBILITY test_attribute(visibility, __GNUC__)
 #endif
 
 #ifndef HAVE_C___HAS_EXTENSION
