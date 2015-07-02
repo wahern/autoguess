@@ -190,6 +190,8 @@
 
 #include <limits.h> /* <features.h> __GLIBC__ __GLIBC_PREREQ __UCLIBC__ */
 
+#define MUSL_MAYBE (defined __linux && !defined __GLIBC__ && !defined __BIONIC__)
+
 #ifndef HAVE_SYS_FEATURE_TESTS_H
 #define HAVE_SYS_FEATURE_TESTS_H (defined __sun || has_include(<sys/feature_tests.h>))
 #endif
@@ -199,11 +201,7 @@
 #endif
 
 #ifndef HAVE_SYS_PARAM_H
-#define HAVE_SYS_PARAM_H \
-	(has_include(<sys/param.h>) || defined __GLIBC__ || defined __sun || \
-	 defined BSD || defined __APPLE__ || defined __DragonFly__ || \
-	 defined __FreeBSD__ || defined __NetBSD__ || defined __OpenBSD__ || \
-	 defined __bsdi__)
+#define HAVE_SYS_PARAM_H (has_include(<sys/param.h>) || (!HAVE_C___HAS_INCLUDE && !MUSL_MAYBE))
 #endif
 
 #if HAVE_SYS_PARAM_H && !defined __linux && !defined __sun && !defined _AIX
@@ -226,8 +224,6 @@
 
 #define IPHONE_2VER(M, m) (((M) * 10000) + ((M) * 100))
 #define IPHONE_PREREQ(M, m) (defined __IPHONE_OS_VERSION_MIN_REQUIRED && IPHONE_2VER((M), (m)) <= __IPHONE_OS_VERSION_MIN_REQUIRED)
-
-#define MUSL_MAYBE (defined __linux && !defined __GLIBC__ && !defined __BIONIC__)
 
 #if defined __NetBSD_Prereq__
 #define NETBSD_PREREQ(M, m, p) __NetBSD_Prereq__(M, m, p)
@@ -423,7 +419,7 @@
 #endif
 
 #ifndef HAVE_DECL_SYS_SIGLIST
-#define HAVE_DECL_SYS_SIGLIST (!MUSL_MAYBE && !__sun)
+#define HAVE_DECL_SYS_SIGLIST (!MUSL_MAYBE && !__sun && !_AIX)
 #endif
 
 
@@ -616,7 +612,7 @@
 #endif
 
 #ifndef HAVE_POSIX_FALLOCATE
-#define HAVE_POSIX_FALLOCATE (GLIBC_PREREQ(2,2) || defined __sun || MUSL_MAYBE || FREEBSD_PREREQ(9,0,0))
+#define HAVE_POSIX_FALLOCATE (GLIBC_PREREQ(2,2) || defined __sun || MUSL_MAYBE || FREEBSD_PREREQ(9,0,0) || defined _AIX)
 #endif
 
 #ifndef HAVE_SIGNALFD
