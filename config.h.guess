@@ -329,7 +329,8 @@
 #endif
 
 #ifndef HAVE_SYS_SOCKIO_H
-#define HAVE_SYS_SOCKIO_H (has_include(<sys/sockio.h>) || (!HAVE_C___HAS_INCLUDE && defined __sun))
+#define HAVE_SYS_SOCKIO_H_ (defined __sun || defined BSD)
+#define HAVE_SYS_SOCKIO_H (has_include(<sys/sockio.h>) || (!HAVE_C___HAS_INCLUDE && HAVE_SYS_SOCKIO_H_))
 #endif
 
 #ifndef HAVE_SYS_STAT_H
@@ -488,6 +489,10 @@
 
 #ifndef HAVE_EVENTFD
 #define HAVE_EVENTFD HAVE_SYS_EVENTFD_H
+#endif
+
+#ifndef HAVE_GETENV_R
+#define HAVE_GETENV_R NETBSD_PREREQ(4,0,0)
 #endif
 
 #ifndef HAVE_INOTIFY_INIT
