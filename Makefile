@@ -2,7 +2,7 @@ srcdir=.
 
 all: config-auto config-guess
 
-$(srcdir)/config.h.auto.in $(srcdir)/configure: $(srcdir)/configure.ac
+$(srcdir)/config.h.auto.in $(srcdir)/configure: $(srcdir)/configure.ac $(srcdir)/ag_check_cc.m4
 	cd $(srcdir) && ./bootstrap
 
 config.h.auto: $(srcdir)/config.h.auto.in $(srcdir)/configure

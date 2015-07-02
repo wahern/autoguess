@@ -34,62 +34,86 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #define AG_VENDOR  "william+autoguess@25thandClement.com"
-#define AG_VERSION 20150701L
+#define AG_VERSION 20150702L
 
 
 /*
- * C O M P I L E R  D E T E C T I O N
+ * C O M P I L E R  V E N D O R / V E R S I O N  D E T E C T I O N
  *
  * See http://sourceforge.net/p/predef/wiki/Compilers/
  *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #define GNUC_2VER(M, m, p) (((M) * 10000) + ((m) * 100) + (p))
-#define GNUC_PREREQ(M, m, p) (defined __GNUC__ && GNUC_2VER(__GNUC__, __GNUC_MINOR__, __GNUC_PATCHLEVEL__) >= GNUC_2VER((M), (m), (p)))
+#define GNUC_PREREQ(M, m, p) (__GNUC__ > 0 && GNUC_2VER(__GNUC__, __GNUC_MINOR__, __GNUC_PATCHLEVEL__) >= GNUC_2VER((M), (m), (p)))
 
 #define MSC_2VER(M, m, p) ((((M) + 6) * 10000000) + ((m) * 1000000) + (p))
-#define MSC_PREREQ(M, m, p) (defined _MSC_VER_FULL && _MSC_VER_FULL >= MSC_2VER((M), (m), (p)))
+#define MSC_PREREQ(M, m, p) (_MSC_VER_FULL > 0 && _MSC_VER_FULL >= MSC_2VER((M), (m), (p)))
 
-#define SUNPRO_PREREQ(M, m, p) (defined __SUNPRO_C && __SUNPRO_C >= 0x ## M ## m ## p)
-
-#if defined __has_extension
-#define has_extension(...) __has_extension(__VA_ARGS__)
-#else
-#define has_extension(...) 0
-#endif
-
-#if defined __has_include
-#define has_include(...) __has_include(__VA_ARGS__)
-#else
-#define has_include(...) 0
-#endif
-
-#if defined __has_builtin
-#define has_builtin(...) __has_builtin(__VA_ARGS__)
-#else
-#define has_builtin(...) 0
-#endif
+#define SUNPRO_PREREQ(M, m, p) (__SUNPRO_C > 0 && __SUNPRO_C >= 0x ## M ## m ## p)
 
 
 /*
- * C O M P I L E R / L A N G U A G E  D E T E C T I O N
+ * C O M P I L E R / L A N G U A G E  F E A T U R E  D E T E C T I O N
+ *
+ * NOTE: The has_ and test_ macros are separate because if the test
+ * expression uses the preprocessor "defined" operator the operand
+ * identifier may be replaced before the expression is evaluated. Most tests
+ * will only use arithmetic operations, but if this is not possible then the
+ * test must be written inline, for example
+ *
+ * 	# if has_attribute(x) || (!HAVE_C____HAS_ATTRIBUTE && defined FOO)
+ * 	#define HAVE___ATTRIBUTE___X
+ * 	#endif
  *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+#if defined __has_attribute
+#define has_attribute(a) __has_attribute(a)
+#define test_attribute(a, E) has_attribute(a)
+#else
+#define has_attribute(a) 0
+#define test_attribute(a, E) (E)
+#endif
+
+#if defined __has_extension
+#define has_extension(x) __has_extension(x)
+#define test_extension(x, E) has_extension(x)
+#else
+#define has_extension(x) 0
+#define test_extension(x, E) (E)
+#endif
+
+#if defined __has_include
+#define has_include(p) __has_include(p)
+#define test_include(p, E) has_include(p)
+#else
+#define has_include(p) 0
+#define test_include(p, E) (E)
+#endif
+
+#if defined __has_builtin
+#define has_builtin(f) __has_builtin(f)
+#define test_builtin(f, E) has_builtin(f)
+#else
+#define has_builtin(f) 0
+#define test_builtin(f, E) (E)
+#endif
 
 #ifndef HAVE_C___ATTRIBUTE__
 #define HAVE_C___ATTRIBUTE__ (__GNUC__)
 #endif
 
+#ifndef HAVE_C___ATTRIBUTE___NONNULL
+#define HAVE_C___ATTRIBUTE___NONNULL test_attribute(nonnull, GNUC_PREREQ(3,3,1))
+#endif
+
 #ifndef HAVE_C___ATTRIBUTE___UNUSED
-#define HAVE_C___ATTRIBUTE___UNUSED (__GNUC__ || SUNPRO_PREREQ(5,9,0))
+#define HAVE_C___ATTRIBUTE___UNUSED test_attribute(unused, (__GNUC__ || SUNPRO_PREREQ(5,9,0)))
 #endif
 
 #ifndef HAVE_C___ATTRIBUTE___VISIBILITY
-#define HAVE_C___ATTRIBUTE___VISIBILITY (__GNUC__ || SUNPRO_PREREQ(5,9,0))
-#endif
-
-#ifndef HAVE_C__GENERIC
-#define HAVE_C__GENERIC (GNUC_PREREQ(4,9,0) || has_extension(c_generic_selections) || __STDC_VERSION__ >= 201112L)
+#define HAVE_C___ATTRIBUTE___VISIBILITY test_attribute(visibility, (__GNUC__ || SUNPRO_PREREQ(5,9,0)))
 #endif
 
 #ifndef HAVE_C___HAS_EXTENSION
@@ -104,24 +128,60 @@
 #define HAVE_C___EXTENSION__ (__GNUC__)
 #endif
 
+#ifndef HAVE_C___TYPEOF
+#define HAVE_C___TYPEOF (_MSC_VER || __GNUC__ || SUNPRO_PREREQ(5,9,0))
+#endif
+
 #ifndef HAVE_C___TYPEOF__
-#define HAVE_C___TYPEOF__ (__GNUC__)
+#define HAVE_C___TYPEOF__ (__GNUC__ || __xlc__ || SUNPRO_PREREQ(5,9,0))
+#endif
+
+#ifndef HAVE_C__GENERIC
+#define HAVE_C__GENERIC test_extension(c_generic_selections, (GNUC_PREREQ(4,9,0) || __STDC_VERSION__ >= 201112L))
 #endif
 
 #ifndef HAVE_C_STATEMENT_EXPRESSION
 #define HAVE_C_STATEMENT_EXPRESSION (__GNUC__ || SUNPRO_PREREQ(5,9,0))
 #endif
 
+#ifndef HAVE_C_TYPEOF
+#define HAVE_C_TYPEOF (__GNUC__ || __xlc__ || SUNPRO_PREREQ(5,9,0))
+#endif
+
+#ifndef HAVE___ATOMIC_FETCH_ADD
+#define HAVE___ATOMIC_FETCH_ADD (defined __ATOMIC_RELAXED)
+#endif
+
+#ifndef HAVE___ATOMIC_FETCH_SUB
+#define HAVE___ATOMIC_FETCH_SUB HAVE___ATOMIC_FETCH_ADD
+#endif
+
+#ifndef HAVE___BUILTIN_CHOOSE_EXPR
+#define HAVE___BUILTIN_CHOOSE_EXPR (GNUC_PREREQ(3,1,1) || defined __clang__)
+#endif
+
+#ifndef HAVE___BUILTIN_EXPECT
+#define HAVE___BUILTIN_EXPECT test_builtin(__builtin_expect, __GNUC__)
+#endif
+
+#ifndef HAVE___BUILTIN_NAN
+#define HAVE___BUILTIN_NAN test_builtin(__builtin_nan, GNUC_PREREQ(3,3,1))
+#endif
+
 #ifndef HAVE___BUILTIN_TRAP
-#define HAVE___BUILTIN_TRAP (GNUC_PREREQ(3,3,0) || has_builtin(__builtin_trap))
+#define HAVE___BUILTIN_TRAP test_builtin(__builtin_trap, GNUC_PREREQ(3,3,1))
+#endif
+
+#ifndef HAVE___BUILTIN_TYPES_COMPATIBLE_P
+#define HAVE___BUILTIN_TYPES_COMPATIBLE_P (GNUC_PREREQ(3,1,1) || defined __clang__)
 #endif
 
 #ifndef HAVE___BUILTIN_UNREACHABLE
-#define HAVE___BUILTIN_UNREACHABLE (GNUC_PREREQ(4,5,0) || has_builtin(__builtin_unreachable))
+#define HAVE___BUILTIN_UNREACHABLE test_builtin(__builtin_unreachable, GNUC_PREREQ(4,5,0))
 #endif
 
 #ifndef HAVE__STATIC_ASSERT
-#define HAVE__STATIC_ASSERT (GNUC_PREREQ(4,6,0) || has_extension(c_static_assert) || defined __C11FEATURES__ || __STDC_VERSION__ >= 201112L)
+#define HAVE__STATIC_ASSERT test_extension(c_static_assert, (GNUC_PREREQ(4,6,0) || __C11FEATURES__ || __STDC_VERSION__ >= 201112L))
 #endif
 
 
