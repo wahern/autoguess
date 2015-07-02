@@ -6,7 +6,7 @@ $(srcdir)/config.h.auto.in $(srcdir)/configure: $(srcdir)/configure.ac
 	cd $(srcdir) && ./bootstrap
 
 config.h.auto: $(srcdir)/config.h.auto.in $(srcdir)/configure
-	$(srcdir)/configure
+	$(srcdir)/configure CC="$(CC)" CFLAGS="$(CFLAGS)" CPPFLAGS="$(CPPFLAGS)"
 
 config-auto: config.c config.h.auto
 	cp config.h.auto config.h
@@ -14,7 +14,7 @@ config-auto: config.c config.h.auto
 
 config-guess: config.c $(srcdir)/config.h.guess
 	cp $(srcdir)/config.h.guess config.h
-	$(CC) -o $@ config.c -DAG_USE_SYSTEM_EXTENSIONS -DAG_SYS_LARGEFILE
+	$(CC) -o $@ config.c -DAG_USE_SYSTEM_EXTENSIONS -DAG_SYS_LARGEFILE $(CPPFLAGS) $(CFLAGS)
 
 config.c: config.h.auto
 	-@rm -f $@
