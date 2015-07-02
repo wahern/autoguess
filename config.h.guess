@@ -364,6 +364,42 @@
 #define HAVE_STRUCT_SOCKADDR_SA_LEN (!defined __linux && !defined __sun)
 #endif
 
+#ifndef HAVE_STRUCT_STAT_ST_ATIM
+#define HAVE_STRUCT_STAT_ST_ATIM (defined st_atime)
+#endif
+
+#ifndef HAVE_STRUCT_STAT_ST_CTIM
+#define HAVE_STRUCT_STAT_ST_CTIM HAVE_STRUCT_STAT_ST_ATIM
+#endif
+
+#ifndef HAVE_STRUCT_STAT_ST_MTIM
+#define HAVE_STRUCT_STAT_ST_MTIM HAVE_STRUCT_STAT_ST_ATIM
+#endif
+
+#ifndef HAVE_STRUCT_STAT_ST_ATIMESPEC
+#define HAVE_STRUCT_STAT_ST_ATIMESPEC (defined __APPLE__ || defined st_atimespec || defined st_atimensec)
+#endif
+
+#ifndef HAVE_STRUCT_STAT_ST_CTIMESPEC
+#define HAVE_STRUCT_STAT_ST_CTIMESPEC HAVE_STRUCT_STAT_ST_ATIMESPEC
+#endif
+
+#ifndef HAVE_STRUCT_STAT_ST_MTIMESPEC
+#define HAVE_STRUCT_STAT_ST_MTIMESPEC HAVE_STRUCT_STAT_ST_ATIMESPEC
+#endif
+
+#ifndef HAVE_STRUCT_STAT_ST_BLOCKS
+#define HAVE_STRUCT_STAT_ST_BLOCKS 1
+#endif
+
+#ifndef HAVE_STRUCT_STAT_ST_BLKSIZE
+#define HAVE_STRUCT_STAT_ST_BLKSIZE 1
+#endif
+
+#ifndef HAVE_STRUCT_STAT_ST_RDEV
+#define HAVE_STRUCT_STAT_ST_RDEV 1
+#endif
+
 
 /*
  * D E C L A R A T I O N  D E T E C T I O N

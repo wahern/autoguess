@@ -26,6 +26,7 @@ config.c: config.h.auto
 			print "#include <stdio.h>"; \
 			print "#include <signal.h>"; \
 			print "#include <assert.h>"; \
+			print "#include <sys/stat.h>"; \
 			print "#include <fcntl.h>"; \
 			print "#include <pthread.h>"; \
 			print "int main(void) {"; } \
