@@ -365,7 +365,7 @@
 #endif
 
 #ifndef HAVE_STRUCT_STAT_ST_ATIM
-#define HAVE_STRUCT_STAT_ST_ATIM (defined st_atime && (!__NetBSD__ || !HAVE_STRUCT_STAT_ST_ATIMESPEC))
+#define HAVE_STRUCT_STAT_ST_ATIM (defined st_atime && ((!__APPLE__ && !__NetBSD__) || !HAVE_STRUCT_STAT_ST_ATIMESPEC))
 #endif
 
 #ifndef HAVE_STRUCT_STAT_ST_CTIM
