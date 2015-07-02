@@ -37,7 +37,7 @@ AC_CHECK_HEADERS([m4_normalize([
 	dlfcn.h ifaddrs.h mach/mach.h mach/clock.h mach/mach_time.h
 	netinet/in6_var.h port.h sys/auxv.h sys/epoll.h sys/event.h
 	sys/eventfd.h sys/feature_tests.h sys/inotify.h sys/param.h
-	sys/signalfd.h sys/sockio.h sys/sysctl.h sys/timerfd.h
+	pthread.h sys/signalfd.h sys/sockio.h sys/sysctl.h sys/timerfd.h
 ])])
 
 # Checks for structure members

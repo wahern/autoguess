@@ -226,7 +226,7 @@
 #define IPHONE_PREREQ(M, m) (defined __IPHONE_OS_VERSION_MIN_REQUIRED && IPHONE_2VER((M), (m)) <= __IPHONE_OS_VERSION_MIN_REQUIRED)
 
 #if defined __NetBSD_Prereq__
-#define NETBSD_PREREQ(M, m, p) __NetBSD_Prereq__(M, m, p)
+#define NETBSD_PREREQ(M, m, p) (!defined __minix && __NetBSD_Prereq__(M, m, p))
 #else
 #define NETBSD_PREREQ(M, m, p) 0
 #endif
@@ -281,6 +281,10 @@
 
 #ifndef HAVE_PORT_H
 #define HAVE_PORT_H (has_include(<port.h>) || (!HAVE_C___HAS_INCLUDE && SUNOS_PREREQ(5,10)))
+#endif
+
+#ifndef HAVE_PTHREAD_H
+#define HAVE_PTHREAD_H (has_include(<pthread.h>) || (!HAVE_C___HAS_INCLUDE && !defined __minix))
 #endif
 
 #ifndef HAVE_STDINT_H
@@ -453,7 +457,7 @@
 #ifndef HAVE_ARC4RANDOM
 #define HAVE_ARC4RANDOM \
 	(defined __APPLE__ || defined __DragonFly__ || defined __FreeBSD__ || \
-	 defined __NetBSD__ || defined __OpenBSD__)
+	 defined __NetBSD__ || defined __OpenBSD__ || defined __minix)
 #endif
 
 #ifndef HAVE_ARC4RANDOM_ADDRANDOM
@@ -524,7 +528,7 @@
 #endif
 
 #ifndef HAVE_GETENV_R
-#define HAVE_GETENV_R NETBSD_PREREQ(4,0,0)
+#define HAVE_GETENV_R (NETBSD_PREREQ(4,0,0) || defined __minix)
 #endif
 
 #ifndef HAVE_INOTIFY_INIT
