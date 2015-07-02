@@ -28,7 +28,9 @@ config.c: config.h.auto
 			print "#include <assert.h>"; \
 			print "#include <sys/stat.h>"; \
 			print "#include <fcntl.h>"; \
+			print "#if HAVE_PTHREAD_H"; \
 			print "#include <pthread.h>"; \
+			print "#endif"; \
 			print "int main(void) {"; } \
 		{ \
 			print "#if "$$1; \
