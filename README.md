@@ -14,6 +14,11 @@ version. I _personally_ prefer using autoconf to generate ```config.h```,
 but often autoconf is impractical or inconvenient either for the developer
 or at build-time.
 
+All the other files in this repository are principally for regression
+testing. ```ag_check_cc.m4``` is suitable for inclusion in autoconf-based
+projects if desired, and includes various compiler feature tests not
+included with autoconf.
+
 ### Selecting APIs
 
 There are two optional defines:
