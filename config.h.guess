@@ -107,7 +107,7 @@
 #endif
 
 #ifndef HAVE_C___ATTRIBUTE__
-#define HAVE_C___ATTRIBUTE__ (__GNUC__)
+#define HAVE_C___ATTRIBUTE__ (__GNUC__ || SUNPRO_PREREQ(5,9,0))
 #endif
 
 #ifndef HAVE_C___ATTRIBUTE___CONSTRUCTOR
