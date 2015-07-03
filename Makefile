@@ -20,7 +20,10 @@ config.c: config.h.auto
 	-@rm -f $@
 	@cat config.h.auto $(srcdir)/config.h.guess | \
 	sed -ne 's/^.*\(HAVE_[0-9A-Za-z_]*\).*$$/\1/p' | \
-	sort -u | grep -v '_$$' | (cat; printf "STRERROR_R_CHAR_P") | awk ' \
+	sort -u | \
+	grep -v '_H_$$' | \
+	awk '$$1!~/^HAVE_(__EXTENSIONS__|_ALL_SOURCE|_GNU_SOURCE|_MINIX|_POSIX_PTHREAD_SEMANTICS|_REENTRANT)$$/ { print $$1; }' | \
+	(cat; printf "STRERROR_R_CHAR_P") | awk ' \
 		BEGIN { \
 			print "#include \"config.h\""; \
 			print "#include <stdio.h>"; \

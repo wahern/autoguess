@@ -171,7 +171,7 @@
 #endif
 
 #ifndef HAVE___BUILTIN_CHOOSE_EXPR
-#define HAVE___BUILTIN_CHOOSE_EXPR (GNUC_PREREQ(3,1,1) || defined __clang__)
+#define HAVE___BUILTIN_CHOOSE_EXPR (GNUC_PREREQ(3,1,1) || __clang__)
 #endif
 
 #ifndef HAVE___BUILTIN_EXPECT
@@ -187,7 +187,7 @@
 #endif
 
 #ifndef HAVE___BUILTIN_TYPES_COMPATIBLE_P
-#define HAVE___BUILTIN_TYPES_COMPATIBLE_P (GNUC_PREREQ(3,1,1) || defined __clang__)
+#define HAVE___BUILTIN_TYPES_COMPATIBLE_P (GNUC_PREREQ(3,1,1) || __clang__)
 #endif
 
 #ifndef HAVE___BUILTIN_UNREACHABLE
@@ -210,25 +210,25 @@
 
 /* Solaris */
 #ifndef __EXTENSIONS__
-#define __EXTENSIONS__
+#define __EXTENSIONS__ 1
 #endif
 
 /* AIX */
 #ifndef _ALL_SOURCE
-#define _ALL_SOURCE
+#define _ALL_SOURCE 1
 #endif
 
 #ifndef _GNU_SOURCE
-#define _GNU_SOURCE
+#define _GNU_SOURCE 1
+#endif
+
+#ifndef _MINIX
+#define _MINIX 1
 #endif
 
 /* Solaris */
 #ifndef _POSIX_PTHREAD_SEMANTICS
-#define _POSIX_PTHREAD_SEMANTICS
-#endif
-
-#ifndef _MINIX
-#define _MINIX
+#define _POSIX_PTHREAD_SEMANTICS 1
 #endif
 
 #endif /* AG_USE_SYSTEM_EXTENSIONS */
@@ -239,7 +239,7 @@
 
 /* Apple */
 #ifndef _DARWIN_USE_64_BIT_INODE
-#define _DARWIN_USE_64_BIT_INODE
+#define _DARWIN_USE_64_BIT_INODE 1
 #endif
 
 /* Solaris and glibc (per Large File Summit recommendation) */
@@ -249,41 +249,65 @@
 
 /* AIX */
 #ifndef _LARGE_FILES
-#define _LARGE_FILES
+#define _LARGE_FILES 1
 #endif
 
 #endif /* AG_SYS_LARGEFILE */
 
 
 /*
- * L I B C  D E T E C T I O N
+ * S Y S T E M  D E T E C T I O N  (S T A G E  0)
  *
- * See http://sourceforge.net/p/predef/wiki/Libraries/
+ * Define HAVE_FOO macros as arithmetic truth values for any pre-defined
+ * system macros which have truth values solely based on whether they're
+ * defined.
  *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#include <limits.h> /* <features.h> __GLIBC__ __GLIBC_PREREQ __UCLIBC__ */
+/* NOTE: None so far. See stage 3 below. */
 
-#define MUSL_MAYBE (defined __linux && !defined __GLIBC__ && !defined __BIONIC__)
 
-#ifndef HAVE_SYS_FEATURE_TESTS_H
-#define HAVE_SYS_FEATURE_TESTS_H (defined __sun || has_include(<sys/feature_tests.h>))
-#endif
+/*
+ * S Y S T E M  D E T E C T I O N  (S T A G E  1)
+ *
+ * Include any headers necessary for minimal libc feature checking, defining
+ * any prerequisite feature macros.
+ *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#if HAVE_SYS_FEATURE_TESTS_H
-#include <sys/feature_tests.h> /* _DTRACE_VERSION */
-#endif
+/*
+ * NOTE: <limits.h> will indirectly include <features.h>, <standards.h>,
+ * <sys/cdefs.h>, <sys/feature_tests.h>, <sys/featuretest.h>, and similar
+ * system headers which define most of what we care about. Among the typical
+ * feature macros, we also get _DTRACE_VERSION.
+ */
+#include <limits.h>
+
+#define MUSL_MAYBE (__linux && !__GLIBC__ && !__BIONIC__)
 
 #ifndef HAVE_SYS_PARAM_H
-#define HAVE_SYS_PARAM_H (has_include(<sys/param.h>) || (!HAVE_C___HAS_INCLUDE && !MUSL_MAYBE))
+#define HAVE_SYS_PARAM_H test_include(<sys/param.h>, !MUSL_MAYBE)
 #endif
 
-#if HAVE_SYS_PARAM_H && !defined __linux && !defined __sun && !defined _AIX
+/*
+ * NOTE: Conditionally load <sys/param.h> so we don't unnecessarily pollute
+ * the namespace.
+ */
+#if HAVE_SYS_PARAM_H && !__linux && !__sun && !_AIX
 #include <sys/param.h> /* __FreeBSD_version __NetBSD_Prereq__ BSD OpenBSD */
 #endif
 
 #include <fcntl.h> /* F_DUPFD_CLOEXEC */
 
+
+/*
+ * S Y S T E M  D E T E C T I O N  (S T A G E  2)
+ *
+ * Macros which determine libc vendor and version.
+ *
+ * See http://sourceforge.net/p/predef/wiki/Libraries/
+ *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #define AIX_PREREQ(M, m) (_AIX # M # m)
 
@@ -294,13 +318,17 @@
 #endif
 
 #define FREEBSD_2VER(M, m, p) (((M) * 100000) + ((m) * 1000) + (p))
-#define FREEBSD_PREREQ(M, m, p) (defined __FreeBSD__ && __FreeBSD_version >= FREEBSD_2VER((M), (m), (p)))
+#define FREEBSD_PREREQ(M, m, p) (__FreeBSD__ > 0 && __FreeBSD_version >= FREEBSD_2VER((M), (m), (p)))
 
 #define IPHONE_2VER(M, m) (((M) * 10000) + ((M) * 100))
-#define IPHONE_PREREQ(M, m) (defined __IPHONE_OS_VERSION_MIN_REQUIRED && IPHONE_2VER((M), (m)) <= __IPHONE_OS_VERSION_MIN_REQUIRED)
+#if defined __IPHONE_OS_VERSION_MIN_REQUIRED
+#define IPHONE_PREREQ(M, m) (IPHONE_2VER((M), (m)) <= __IPHONE_OS_VERSION_MIN_REQUIRED)
+#else
+#define IPHONE_PREREQ(M, m) 0
+#endif
 
 #if defined __NetBSD_Prereq__
-#define NETBSD_PREREQ(M, m, p) (!defined __minix && __NetBSD_Prereq__(M, m, p))
+#define NETBSD_PREREQ(M, m, p) (!__minix && __NetBSD_Prereq__(M, m, p))
 #else
 #define NETBSD_PREREQ(M, m, p) 0
 #endif
@@ -309,14 +337,67 @@
 #define MACOS_2VER_10_10(M, m, p) (((M) * 10000) + ((M) * 100) + (p))
 #define MACOS_PREREQ_10_10(M, m, p) (((M) > 10 || ((M) == 10 && (m) >= 10)) && MACOS_2VER_10_10((M), (m), (p)) <= __MAC_OS_X_VERSION_MIN_REQUIRED)
 #define MACOS_PREREQ_10_9(M, m, p) (((M) == 10 && (m) < 10) && MACOS_2VER_10_9((M), (m), (p)) <= __MAC_OS_X_VERSION_MIN_REQUIRED)
-#define MACOS_PREREQ(M, m, p) (defined __MAC_OS_X_VERSION_MIN_REQUIRED && (MACOS_PREREQ_10_10((M), (m), (p)) || MACOS_PREREQ_10_9((M), (m), (p))))
+#if defined __MAC_OS_X_VERSION_MIN_REQUIRED
+#define MACOS_PREREQ(M, m, p) (MACOS_PREREQ_10_10((M), (m), (p)) || MACOS_PREREQ_10_9((M), (m), (p)))
+#else
+#define MACOS_PREREQ(M, m, p) 0
+#endif
 
-#define SUNOS_PREREQ_5_10 (defined __sun && defined _DTRACE_VERSION)
-#define SUNOS_PREREQ_5_11 (defined __sun && defined F_DUPFD_CLOEXEC)
+#define SUNOS_PREREQ_5_10 (__sun && _DTRACE_VERSION)
+#define SUNOS_PREREQ_5_11 (__sun && F_DUPFD_CLOEXEC)
 #define SUNOS_PREREQ(M, m) (SUNOS_PREREQ_ ## M ## _ ## m)
 
 #define UCLIBC_2VER(M, m, p) (((M) * 10000) + ((m) * 100) + (p))
-#define UCLIBC_PREREQ(M, m, p) (defined __UCLIBC__ && UCLIBC_2VER(__UCLIBC_MAJOR__, __UCLIBC_MINOR__, __UCLIBC_SUBLEVEL__) >= UCLIBC_2VER((M), (m), (p)))
+#if defined __UCLIBC__
+#define UCLIBC_PREREQ(M, m, p) (UCLIBC_2VER(__UCLIBC_MAJOR__, __UCLIBC_MINOR__, __UCLIBC_SUBLEVEL__) >= UCLIBC_2VER((M), (m), (p)))
+#else
+#define UCLIBC_PREREQ(M, m, p) 0
+#endif
+
+
+/*
+ * S Y S T E M  D E T E C T I O N  (S T A G E  3)
+ *
+ * Define HAVE_FOO macros as arithmetic truth values for any system macros
+ * which have a truth value solely based on whether they're defined.
+ *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+#ifndef HAVE___EXTENSIONS__
+#ifdef __EXTENSIONS__
+#define HAVE___EXTENSIONS__ 1
+#endif
+#endif
+
+#ifndef HAVE__ALL_SOURCE
+#ifdef _ALL_SOURCE
+#define HAVE__ALL_SOURCE 1
+#endif
+#endif
+
+#ifndef HAVE__GNU_SOURCE
+#ifdef _GNU_SOURCE
+#define HAVE__GNU_SOURCE 1
+#endif
+#endif
+
+#ifndef HAVE__MINIX
+#if defined _MINIX || (defined __minix && defined _NETBSD_SOURCE)
+#define HAVE__MINIX 1
+#endif
+#endif
+
+#ifndef HAVE__POSIX_PTHREAD_SEMANTICS
+#ifdef _POSIX_PTHREAD_SEMANTICS
+#define HAVE__POSIX_PTHREAD_SEMANTICS 1
+#endif
+#endif
+
+#ifndef HAVE__REENTRANT
+#ifdef _REENTRANT
+#define HAVE__REENTRANT 1
+#endif
+#endif
 
 
 /*
@@ -325,12 +406,12 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #ifndef HAVE_DLFCN_H
-#define HAVE_DLFCN_H (has_include(<dlfcn.h>) || (!HAVE_C___HAS_INCLUDE && 1))
+#define HAVE_DLFCN_H test_include(<dlfcn.h>, 1)
 #endif
 
 #ifndef HAVE_IFADDRS_H
-#define HAVE_IFADDRS_H_ (!defined _AIX && (!defined __sun || SUNOS_PREREQ(5,11)))
-#define HAVE_IFADDRS_H (has_include(<ifaddrs.h>) || (!HAVE_C___HAS_INCLUDE && HAVE_IFADDRS_H_))
+#define HAVE_IFADDRS_H_ (!_AIX && (!__sun || SUNOS_PREREQ(5,11)))
+#define HAVE_IFADDRS_H test_include(<ifaddrs.h>, HAVE_IFADDRS_H_)
 #endif
 
 #ifndef HAVE_INTTYPES_H
@@ -338,15 +419,15 @@
 #endif
 
 #ifndef HAVE_MACH_CLOCK_H
-#define HAVE_MACH_CLOCK_H (has_include(<mach/clock.h>) || (!HAVE_C___HAS_INCLUDE && defined __APPLE__))
+#define HAVE_MACH_CLOCK_H test_include(<mach/clock.h>, __APPLE__)
 #endif
 
 #ifndef HAVE_MACH_MACH_H
-#define HAVE_MACH_MACH_H (has_include(<mach/mach.h>) || (!HAVE_C___HAS_INCLUDE && defined __APPLE__))
+#define HAVE_MACH_MACH_H test_include(<mach/mach.h>, __APPLE__)
 #endif
 
 #ifndef HAVE_MACH_MACH_TIME_H
-#define HAVE_MACH_MACH_TIME_H (has_include(<mach/mach_time.h>) || (!HAVE_C___HAS_INCLUDE && defined __APPLE__))
+#define HAVE_MACH_MACH_TIME_H test_include(<mach/mach_time.h>, __APPLE__)
 #endif
 
 #ifndef HAVE_MEMORY_H
@@ -354,11 +435,11 @@
 #endif
 
 #ifndef HAVE_PORT_H
-#define HAVE_PORT_H (has_include(<port.h>) || (!HAVE_C___HAS_INCLUDE && SUNOS_PREREQ(5,10)))
+#define HAVE_PORT_H test_include(<port.h>, SUNOS_PREREQ(5,10))
 #endif
 
 #ifndef HAVE_PTHREAD_H
-#define HAVE_PTHREAD_H (has_include(<pthread.h>) || (!HAVE_C___HAS_INCLUDE && !defined __minix))
+#define HAVE_PTHREAD_H test_include(<pthread.h>, !__minix)
 #endif
 
 #ifndef HAVE_STDINT_H
@@ -378,33 +459,32 @@
 #endif
 
 #ifndef HAVE_SYS_AUXV_H
-#define HAVE_SYS_AUXV_H_ (GLIBC_PREREQ(2,16) || (!GLIBC_PREREQ(0,0) && defined __linux) || defined __sun)
-#define HAVE_SYS_AUXV_H (has_include(<sys/auxv.h>) || (!HAVE_C___HAS_INCLUDE && HAVE_SYS_AUXV_H_))
+#define HAVE_SYS_AUXV_H_ (GLIBC_PREREQ(2,16) || (!GLIBC_PREREQ(0,0) && __linux) || __sun)
+#define HAVE_SYS_AUXV_H test_include(<sys/auxv.h>, HAVE_SYS_AUXV_H_)
 #endif
 
 #ifndef HAVE_SYS_EPOLL_H
-#define HAVE_SYS_EPOLL_H (has_include(<sys/epoll.h>) || (!HAVE_C___HAS_INCLUDE && defined __linux))
+#define HAVE_SYS_EPOLL_H test_include(<sys/epoll.h>, __linux)
 #endif
 
 #ifndef HAVE_SYS_EVENT_H
-#define HAVE_SYS_EVENT_H (has_include(<sys/event.h>) || (!HAVE_C___HAS_INCLUDE && defined BSD))
+#define HAVE_SYS_EVENT_H test_include(<sys/event.h>, BSD)
 #endif
 
 #ifndef HAVE_SYS_EVENTFD_H
-#define HAVE_SYS_EVENTFD_H (has_include(<sys/eventfd.h>) || (!HAVE_C___HAS_INCLUDE && defined __linux))
+#define HAVE_SYS_EVENTFD_H test_include(<sys/eventfd.h>, __linux)
 #endif
 
 #ifndef HAVE_SYS_INOTIFY_H
-#define HAVE_SYS_INOTIFY_H (has_include(<sys/inotify.h>) || (!HAVE_C___HAS_INCLUDE && defined __linux))
+#define HAVE_SYS_INOTIFY_H test_include(<sys/inotify.h>, __linux)
 #endif
 
 #ifndef HAVE_SYS_SIGNALFD_H
-#define HAVE_SYS_SIGNALFD_H (has_include(<sys/signalfd.h>) || (!HAVE_C___HAS_INCLUDE && defined __linux))
+#define HAVE_SYS_SIGNALFD_H test_include(<sys/signalfd.h>, __linux)
 #endif
 
 #ifndef HAVE_SYS_SOCKIO_H
-#define HAVE_SYS_SOCKIO_H_ (defined __sun || defined BSD)
-#define HAVE_SYS_SOCKIO_H (has_include(<sys/sockio.h>) || (!HAVE_C___HAS_INCLUDE && HAVE_SYS_SOCKIO_H_))
+#define HAVE_SYS_SOCKIO_H test_include(<sys/sockio.h>, (__sun || BSD))
 #endif
 
 #ifndef HAVE_SYS_STAT_H
@@ -412,12 +492,11 @@
 #endif
 
 #ifndef HAVE_SYS_SYSCTL_H
-#define HAVE_SYS_SYSCTL_H_ (defined BSD || defined __GLIBC__)
-#define HAVE_SYS_SYSCTL_H (has_include(<sys/sysctl.h>) || (!HAVE_C___HAS_INCLUDE && HAVE_SYS_SYSCTL_H_))
+#define HAVE_SYS_SYSCTL_H test_include(<sys/sysctl.h>, (BSD || __GLIBC__))
 #endif
 
 #ifndef HAVE_SYS_TIMERFD_H
-#define HAVE_SYS_TIMERFD_H (has_include(<sys/timerfd.h>) || (!HAVE_C___HAS_INCLUDE && defined __linux))
+#define HAVE_SYS_TIMERFD_H test_include(<sys/timerfd.h>, __linux)
 #endif
 
 #ifndef HAVE_SYS_TYPES_H
@@ -435,7 +514,7 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #ifndef HAVE_STRUCT_SOCKADDR_SA_LEN
-#define HAVE_STRUCT_SOCKADDR_SA_LEN (!defined __linux && !defined __sun)
+#define HAVE_STRUCT_SOCKADDR_SA_LEN (!__linux && !__sun)
 #endif
 
 #ifndef HAVE_STRUCT_STAT_ST_ATIM
@@ -451,7 +530,7 @@
 #endif
 
 #ifndef HAVE_STRUCT_STAT_ST_ATIMESPEC
-#define HAVE_STRUCT_STAT_ST_ATIMESPEC (defined __APPLE__ || defined st_atimespec || defined st_atimensec)
+#define HAVE_STRUCT_STAT_ST_ATIMESPEC (__APPLE__ || defined st_atimespec || defined st_atimensec)
 #endif
 
 #ifndef HAVE_STRUCT_STAT_ST_CTIMESPEC
@@ -485,7 +564,7 @@
 #endif
 
 #ifndef HAVE_DECL_PROGRAM_INVOCATION_SHORT_NAME
-#define HAVE_DECL_PROGRAM_INVOCATION_SHORT_NAME (defined __linux && defined _GNU_SOURCE)
+#define HAVE_DECL_PROGRAM_INVOCATION_SHORT_NAME (__linux && HAVE__GNU_SOURCE)
 #endif
 
 #ifndef HAVE_DECL_PTHREAD_MUTEX_ROBUST
@@ -511,7 +590,7 @@
 #endif
 
 #ifndef HAVE_PROGRAM_INVOCATION_SHORT_NAME
-#define HAVE_PROGRAM_INVOCATION_SHORT_NAME (defined __linux)
+#define HAVE_PROGRAM_INVOCATION_SHORT_NAME (__linux)
 #endif
 
 #ifndef HAVE_SYS_SIGLIST
@@ -530,8 +609,8 @@
 
 #ifndef HAVE_ARC4RANDOM
 #define HAVE_ARC4RANDOM \
-	(defined __APPLE__ || defined __DragonFly__ || defined __FreeBSD__ || \
-	 defined __NetBSD__ || defined __OpenBSD__ || defined __minix)
+	(__APPLE__ || __DragonFly__ || __FreeBSD__ || __NetBSD__ || \
+	 __OpenBSD__ || __minix)
 #endif
 
 #ifndef HAVE_ARC4RANDOM_ADDRANDOM
@@ -543,11 +622,11 @@
 #endif
 
 #ifndef HAVE_CLOCK_GETTIME
-#define HAVE_CLOCK_GETTIME (!defined __APPLE__)
+#define HAVE_CLOCK_GETTIME (!__APPLE__)
 #endif
 
 #ifndef HAVE_DLADDR
-#define HAVE_DLADDR (HAVE_DLOPEN && !defined _AIX && ((!__GLIBC__ && !MUSL_MAYBE) || defined _GNU_SOURCE))
+#define HAVE_DLADDR (HAVE_DLOPEN && !_AIX && ((!__GLIBC__ && !MUSL_MAYBE) || HAVE__GNU_SOURCE))
 #endif
 
 #ifndef HAVE_DLOPEN
@@ -568,8 +647,8 @@
 
 #ifndef HAVE_FDOPENDIR
 #define HAVE_FDOPENDIR ( \
-	(!defined __APPLE__ || MACOS_PREREQ(10,10,0) || IPHONE_PREREQ(8,0)) \
-	&& (!defined __NetBSD__ || NETBSD_PREREQ(6,0,0)) \
+	(!__APPLE__ || MACOS_PREREQ(10,10,0) || IPHONE_PREREQ(8,0)) \
+	&& (!__NetBSD__ || NETBSD_PREREQ(6,0,0)) \
 )
 #endif
 
@@ -582,7 +661,7 @@
 #endif
 
 #ifndef HAVE_EPOLL_CREATE1
-#define HAVE_EPOLL_CREATE1 (HAVE_EPOLL_CREATE && defined EPOLL_CLOEXEC)
+#define HAVE_EPOLL_CREATE1 (HAVE_EPOLL_CREATE && EPOLL_CLOEXEC)
 #endif
 
 #ifndef HAVE_EPOLL_CTL
@@ -602,7 +681,7 @@
 #endif
 
 #ifndef HAVE_GETENV_R
-#define HAVE_GETENV_R (NETBSD_PREREQ(4,0,0) || defined __minix)
+#define HAVE_GETENV_R (NETBSD_PREREQ(4,0,0) || __minix)
 #endif
 
 #ifndef HAVE_INOTIFY_INIT
@@ -610,19 +689,19 @@
 #endif
 
 #ifndef HAVE_INOTIFY_INIT1
-#define HAVE_INOTIFY_INIT1 (HAVE_INOTIFY_INIT && defined IN_CLOEXEC)
+#define HAVE_INOTIFY_INIT1 (HAVE_INOTIFY_INIT && IN_CLOEXEC)
 #endif
 
 #ifndef HAVE_GETAUXVAL
-#define HAVE_GETAUXVAL (HAVE_SYS_AUXV_H && !defined __sun)
+#define HAVE_GETAUXVAL (HAVE_SYS_AUXV_H && !__sun)
 #endif
 
 #ifndef HAVE_GETEXECNAME
-#define HAVE_GETEXECNAME (defined __sun)
+#define HAVE_GETEXECNAME (__sun)
 #endif
 
 #ifndef HAVE_GETIFADDRS
-#define HAVE_GETIFADDRS (HAVE_IFADDRS_H && !defined __sun)
+#define HAVE_GETIFADDRS (HAVE_IFADDRS_H && !__sun)
 #endif
 
 #ifndef HAVE_GETPROGNAME
@@ -630,7 +709,7 @@
 #endif
 
 #ifndef HAVE_ISSETUGID
-#define HAVE_ISSETUGID ((!defined __linux || (MUSL_MAYBE && defined _GNU_SOURCE)) && !defined _AIX)
+#define HAVE_ISSETUGID ((!__linux || (MUSL_MAYBE && HAVE__GNU_SOURCE)) && !_AIX)
 #endif
 
 #if HAVE_SYS_EVENT_H
@@ -686,11 +765,11 @@
 #endif
 
 #ifndef HAVE_POSIX_FADVISE
-#define HAVE_POSIX_FADVISE (defined POSIX_FADV_NORMAL || GLIBC_PREREQ(2,2) || defined __sun || MUSL_MAYBE || FREEBSD_PREREQ(9,0,0))
+#define HAVE_POSIX_FADVISE (defined POSIX_FADV_NORMAL || GLIBC_PREREQ(2,2) || __sun || MUSL_MAYBE || FREEBSD_PREREQ(9,0,0))
 #endif
 
 #ifndef HAVE_POSIX_FALLOCATE
-#define HAVE_POSIX_FALLOCATE (GLIBC_PREREQ(2,2) || defined __sun || MUSL_MAYBE || FREEBSD_PREREQ(9,0,0) || defined _AIX)
+#define HAVE_POSIX_FALLOCATE (GLIBC_PREREQ(2,2) || __sun || MUSL_MAYBE || FREEBSD_PREREQ(9,0,0) || _AIX)
 #endif
 
 #ifndef HAVE_SIGNALFD
@@ -698,11 +777,11 @@
 #endif
 
 #ifndef HAVE_SIGTIMEDWAIT
-#define HAVE_SIGTIMEDWAIT (!defined __APPLE__ && !defined __OpenBSD__)
+#define HAVE_SIGTIMEDWAIT (!__APPLE__ && !__OpenBSD__)
 #endif
 
 #ifndef HAVE_SIGWAIT
-#define HAVE_SIGWAIT (!defined __minix)
+#define HAVE_SIGWAIT (!__minix)
 #endif
 
 #ifndef HAVE_STATIC_ASSERT
@@ -734,7 +813,7 @@
 #endif
 
 #ifndef STRERROR_R_CHAR_P
-#define STRERROR_R_CHAR_P ((GLIBC_PREREQ(0,0) || UCLIBC_PREREQ(0,0,0)) && (defined _GNU_SOURCE || !(_POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600)))
+#define STRERROR_R_CHAR_P ((GLIBC_PREREQ(0,0) || UCLIBC_PREREQ(0,0,0)) && (HAVE__GNU_SOURCE || !(_POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600)))
 #endif
 
 

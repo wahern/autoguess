@@ -1,5 +1,16 @@
 AC_DEFUN([AG_CHECK_CC], [
 
+AC_MSG_CHECKING([for __attribute__(()) annotation support])
+AC_LINK_IFELSE([
+	AC_LANG_PROGRAM([], [int i __attribute__(()); return 0;])
+], [
+	AC_DEFINE([HAVE_C___ATTRIBUTE__], [1], [Define to 1 if compiler supports __attribute__(()) annotation])
+	AC_MSG_RESULT([yes])
+], [
+	AC_MSG_RESULT([no])
+])
+
+
 #
 # NOTE: Solaris Studio 12.4 supports the __has_attribute test macro. If
 # available we defer to its judgment so we match the result of
