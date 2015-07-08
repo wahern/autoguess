@@ -438,7 +438,7 @@
 #define HAVE_PORT_H test_include(<port.h>, SUNOS_PREREQ(5,10))
 #endif
 
-# TODO: Maybe test _POSIX_THREADS from <unistd.h>.
+/* TODO: Maybe test _POSIX_THREADS from <unistd.h>. */
 #ifndef HAVE_PTHREAD_H
 #define HAVE_PTHREAD_H test_include(<pthread.h>, !__minix)
 #endif
