@@ -17,7 +17,10 @@ AC_CONFIG_HEADERS([config.h.auto])
 AC_PROG_CC
 
 # Define _GNU_SOURCE, __EXTENSIONS__, _POSIX_PTHREAD_SEMANTICS, etc.
-AC_USE_SYSTEM_EXTENSIONS
+AC_ARG_ENABLE([extensions], [  --disable-extensions    expose system extensions])
+if test "$enable_extensions" != no; then
+	AC_USE_SYSTEM_EXTENSIONS
+fi
 
 # Largefile support
 AC_SYS_LARGEFILE
