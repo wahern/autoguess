@@ -34,7 +34,7 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #define AG_VENDOR  "william+autoguess@25thandClement.com"
-#define AG_VERSION 20150702L
+#define AG_VERSION 20150707L
 
 
 /*
@@ -472,7 +472,8 @@
 #endif
 
 #ifndef HAVE_SYS_EVENTFD_H
-#define HAVE_SYS_EVENTFD_H test_include(<sys/eventfd.h>, __linux)
+#define HAVE_SYS_EVENTFD_H_ (GLIBC_PREREQ(2,8) || (!GLIBC_PREREQ(0,0) && __linux) || EFD_CLOEXEC)
+#define HAVE_SYS_EVENTFD_H test_include(<sys/eventfd.h>, HAVE_SYS_EVENTFD_H_)
 #endif
 
 #ifndef HAVE_SYS_INOTIFY_H
@@ -480,7 +481,8 @@
 #endif
 
 #ifndef HAVE_SYS_SIGNALFD_H
-#define HAVE_SYS_SIGNALFD_H test_include(<sys/signalfd.h>, __linux)
+#define HAVE_SYS_SIGNALFD_H_ (GLIBC_PREREQ(2,8) || (!GLIBC_PREREQ(0,0) && __linux) || SFD_CLOEXEC)
+#define HAVE_SYS_SIGNALFD_H test_include(<sys/signalfd.h>, HAVE_SYS_SIGNALFD_H_)
 #endif
 
 #ifndef HAVE_SYS_SOCKIO_H
@@ -496,7 +498,8 @@
 #endif
 
 #ifndef HAVE_SYS_TIMERFD_H
-#define HAVE_SYS_TIMERFD_H test_include(<sys/timerfd.h>, __linux)
+#define HAVE_SYS_TIMERFD_H_  (GLIBC_PREREQ(2,8) || (!GLIBC_PREREQ(0,0) && __linux) || TFD_CLOEXEC)
+#define HAVE_SYS_TIMERFD_H test_include(<sys/timerfd.h>, HAVE_SYS_TIMERFD_H_)
 #endif
 
 #ifndef HAVE_SYS_TYPES_H
