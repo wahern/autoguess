@@ -34,7 +34,7 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #define AG_VENDOR  "william+autoguess@25thandClement.com"
-#define AG_VERSION 20150707L
+#define AG_VERSION 20160106L
 
 
 /*
@@ -684,20 +684,12 @@
 #define HAVE_EVENTFD HAVE_SYS_EVENTFD_H
 #endif
 
-#ifndef HAVE_GETENV_R
-#define HAVE_GETENV_R (NETBSD_PREREQ(4,0,0) || __minix)
-#endif
-
-#ifndef HAVE_INOTIFY_INIT
-#define HAVE_INOTIFY_INIT HAVE_SYS_INOTIFY_H
-#endif
-
-#ifndef HAVE_INOTIFY_INIT1
-#define HAVE_INOTIFY_INIT1 (HAVE_INOTIFY_INIT && IN_CLOEXEC)
-#endif
-
 #ifndef HAVE_GETAUXVAL
 #define HAVE_GETAUXVAL (HAVE_SYS_AUXV_H && !__sun)
+#endif
+
+#ifndef HAVE_GETENV_R
+#define HAVE_GETENV_R (NETBSD_PREREQ(4,0,0) || __minix)
 #endif
 
 #ifndef HAVE_GETEXECNAME
@@ -710,6 +702,14 @@
 
 #ifndef HAVE_GETPROGNAME
 #define HAVE_GETPROGNAME (HAVE_ARC4RANDOM || SUNOS_PREREQ(5,11))
+#endif
+
+#ifndef HAVE_INOTIFY_INIT
+#define HAVE_INOTIFY_INIT HAVE_SYS_INOTIFY_H
+#endif
+
+#ifndef HAVE_INOTIFY_INIT1
+#define HAVE_INOTIFY_INIT1 (HAVE_INOTIFY_INIT && IN_CLOEXEC)
 #endif
 
 #ifndef HAVE_ISSETUGID
@@ -730,6 +730,14 @@
 
 #ifndef HAVE_KQUEUE1
 #define HAVE_KQUEUE1 (HAVE_KQUEUE && NETBSD_PREREQ(6,0,0))
+#endif
+
+#ifndef HAVE_PACCEPT
+#define HAVE_PACCEPT NETBSD_PREREQ(6,0,0)
+#endif
+
+#ifndef HAVE_PIPE2
+#define HAVE_PIPE2 (GLIBC_PREREQ(2,9) || FREEBSD_PREREQ(10,0,0) || NETBSD_PREREQ(6,0,0) || UCLIBC_PREREQ(0,9,32) || MUSL_MAYBE || __BIONIC__)
 #endif
 
 #ifndef HAVE_PORT_ALERT
@@ -762,10 +770,6 @@
 
 #ifndef HAVE_PORT_SENDN
 #define HAVE_PORT_SENDN HAVE_PORT_CREATE
-#endif
-
-#ifndef HAVE_PIPE2
-#define HAVE_PIPE2 (GLIBC_PREREQ(2,9) || FREEBSD_PREREQ(10,0,0) || NETBSD_PREREQ(6,0,0) || UCLIBC_PREREQ(0,9,32) || MUSL_MAYBE || __BIONIC__)
 #endif
 
 #ifndef HAVE_POSIX_FADVISE
