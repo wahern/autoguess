@@ -34,7 +34,7 @@ system extensions in the same manner as AC_USE_SYSTEM_EXTENSIONS.
 Unlike the default style in autoconf the feature macros in
 ```config.h.guess``` are _always_ defined. This is for two reasons:
 
-* To avoid polluting the namespace unnecessarily some features tests rely on
+* To avoid polluting the namespace unnecessarily some feature tests rely on
 the application including the relevent header in order for the test to work.
 However, ```config.h``` typically must be included _before_ any other system
 header so that system extensions and largefile support can be enabled. This
