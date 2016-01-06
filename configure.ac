@@ -60,17 +60,41 @@ AC_CHECK_DECLS([PTHREAD_MUTEX_ROBUST], [], [], [#include <pthread.h>])
 
 # Checks for library functions.
 AC_CHECK_FUNCS([m4_normalize([
-	arc4random arc4random_addrandom arc4random_stir clock_gettime dladdr
-	dlsym dlopen dup2 dup3 fdopendir dup2 dup3 epoll_create
-	epoll_create1 epoll_ctl epoll_wait eventfd getauxval getenv_r
-	getexecname getifaddrs getprogname inotify_init issetugid kevent
-	kqueue kqueue1 pipe2 port_alert port_associate port_create
-	port_dissociate port_get port_getn port_send port_sendn
-	posix_fadvise posix_fallocate signalfd sigtimedwait sigwait sysctl
-	timerfd_create timerfd_gettime timerfd_settime
+	accept4 arc4random arc4random_addrandom arc4random_stir
+	clock_gettime dladdr dlopen dlsym dup2 dup3 fdopendir epoll_create
+	epoll_create1 epoll_ctl epoll_pwait epoll_wait eventfd getauxval
+	getenv_r getexecname getifaddrs getprogname inotify_init
+	inotify_init1 issetugid kevent kqueue kqueue1 paccept pipe2
+	port_alert port_associate port_create port_dissociate port_get
+	port_getn port_send port_sendn posix_fadvise posix_fallocate
+	signalfd sigtimedwait sigwait sysctl timerfd_create timerfd_gettime
+	timerfd_settime
 ])])
 
 # Check for strerror_r and variant
 AC_FUNC_STRERROR_R
+
+# Check for _Static_assert and static_assert
+AC_DEFUN([AX_CHECK_STATIC_ASSERT_BODY], [
+	AS_VAR_PUSHDEF([ac_Symbol], [AS_TR_SH([ac_cv_$1])])
+	AC_CACHE_CHECK([for $1], [ac_Symbol], [
+		AC_LINK_IFELSE([
+			AC_LANG_PROGRAM([$4],[[
+				$1(1, "");
+				return 0;
+			]])
+		], [AS_VAR_SET([ac_Symbol], [yes])], [AS_VAR_SET([ac_Symbol], [no])])
+	])
+	AS_VAR_IF([ac_Symbol], [yes], [AC_DEFINE(AS_TR_CPP([HAVE_$1]), [1], [Define to 1 if have $1.])])
+	AS_VAR_IF([ac_Symbol], [yes], [$2], [$3])
+	AS_VAR_POPDEF([ac_Symbol])
+])
+
+AC_DEFUN([AX_CHECK_STATIC_ASSERT], [
+	AX_CHECK_STATIC_ASSERT_BODY([static_assert],[],[],[#include <assert.h>])
+	AX_CHECK_STATIC_ASSERT_BODY([_Static_assert],[],[],[])
+])
+
+AX_CHECK_STATIC_ASSERT
 
 AC_OUTPUT
