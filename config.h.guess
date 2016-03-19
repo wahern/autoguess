@@ -734,6 +734,12 @@
 #define HAVE_KQUEUE1 (HAVE_KQUEUE && AG_NETBSD_PREREQ(6,0,0))
 #endif
 
+#ifndef HAVE_OPENAT
+#define HAVE_OPENAT \
+	((!__APPLE__ || AG_MACOS_PREREQ(10,10,0) || AG_IPHONE_PREREQ(8,0)) \
+	 && (!__NetBSD__))
+#endif
+
 #ifndef HAVE_PACCEPT
 #define HAVE_PACCEPT AG_NETBSD_PREREQ(6,0,0)
 #endif

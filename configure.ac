@@ -64,7 +64,7 @@ AC_CHECK_FUNCS([m4_normalize([
 	clock_gettime dladdr dlopen dlsym dup2 dup3 fdopendir epoll_create
 	epoll_create1 epoll_ctl epoll_pwait epoll_wait eventfd getauxval
 	getenv_r getexecname getifaddrs getprogname inotify_init
-	inotify_init1 issetugid kevent kqueue kqueue1 paccept pipe2
+	inotify_init1 issetugid kevent kqueue kqueue1 openat paccept pipe2
 	port_alert port_associate port_create port_dissociate port_get
 	port_getn port_send port_sendn posix_fadvise posix_fallocate
 	signalfd sigtimedwait sigwait sysctl timerfd_create timerfd_gettime
