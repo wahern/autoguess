@@ -70,7 +70,7 @@
  * it in parentheses because the expansion results in a token sequence that
  * chokes the compiler: __has_attribute(nonnull) becomes 
  * __has_attribute__ (nonnull), with a literal space between the preprocessor
- * identifier and the open paranthesis.
+ * identifier and the open parenthesis.
  *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -258,7 +258,7 @@
 /*
  * S Y S T E M  D E T E C T I O N  (S T A G E  0)
  *
- * Define HAVE_FOO macros as arithmetic truth values for any pre-defined
+ * Define HAVE_FOO macros as arithmetic truth values for any predefined
  * system macros which have truth values solely based on whether they're
  * defined.
  *
