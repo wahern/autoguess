@@ -1,7 +1,7 @@
 /* ==========================================================================
  * config.h.guess - Preprocessor-based feature detection
  * --------------------------------------------------------------------------
- * Copyright (c) 2015  William Ahern
+ * Copyright (c) 2015-2016  William Ahern
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
@@ -34,7 +34,7 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #define AG_VENDOR  "william+autoguess@25thandClement.com"
-#define AG_VERSION 20160106L
+#define AG_VERSION 20160318L
 
 
 /*
@@ -44,13 +44,13 @@
  *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#define GNUC_2VER(M, m, p) (((M) * 10000) + ((m) * 100) + (p))
-#define GNUC_PREREQ(M, m, p) (__GNUC__ > 0 && GNUC_2VER(__GNUC__, __GNUC_MINOR__, __GNUC_PATCHLEVEL__) >= GNUC_2VER((M), (m), (p)))
+#define AG_GNUC_2VER(M, m, p) (((M) * 10000) + ((m) * 100) + (p))
+#define AG_GNUC_PREREQ(M, m, p) (__GNUC__ > 0 && AG_GNUC_2VER(__GNUC__, __GNUC_MINOR__, __GNUC_PATCHLEVEL__) >= AG_GNUC_2VER((M), (m), (p)))
 
-#define MSC_2VER(M, m, p) ((((M) + 6) * 10000000) + ((m) * 1000000) + (p))
-#define MSC_PREREQ(M, m, p) (_MSC_VER_FULL > 0 && _MSC_VER_FULL >= MSC_2VER((M), (m), (p)))
+#define AG_MSC_2VER(M, m, p) ((((M) + 6) * 10000000) + ((m) * 1000000) + (p))
+#define AG_MSC_PREREQ(M, m, p) (_MSC_VER_FULL > 0 && _MSC_VER_FULL >= AG_MSC_2VER((M), (m), (p)))
 
-#define SUNPRO_PREREQ(M, m, p) (__SUNPRO_C > 0 && __SUNPRO_C >= 0x ## M ## m ## p)
+#define AG_SUNPRO_PREREQ(M, m, p) (__SUNPRO_C > 0 && __SUNPRO_C >= 0x ## M ## m ## p)
 
 
 /*
@@ -75,59 +75,59 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #if defined __has_attribute
-#define has_attribute(a) __has_attribute(a)
-#define test_attribute(a, E) (has_attribute(a))
+#define ag_has_attribute(a) __has_attribute(a)
+#define ag_test_attribute(a, E) (ag_has_attribute(a))
 #else
-#define has_attribute(a) 0
-#define test_attribute(a, E) (E)
+#define ag_has_attribute(a) 0
+#define ag_test_attribute(a, E) (E)
 #endif
 
 #if defined __has_extension
-#define has_extension(x) __has_extension(x)
-#define test_extension(x, E) (has_extension(x))
+#define ag_has_extension(x) __has_extension(x)
+#define ag_test_extension(x, E) (ag_has_extension(x))
 #else
-#define has_extension(x) 0
-#define test_extension(x, E) (E)
+#define ag_has_extension(x) 0
+#define ag_test_extension(x, E) (E)
 #endif
 
 #if defined __has_include
-#define has_include(p) __has_include(p)
-#define test_include(p, E) (has_include(p))
+#define ag_has_include(p) __has_include(p)
+#define ag_test_include(p, E) (ag_has_include(p))
 #else
-#define has_include(p) 0
-#define test_include(p, E) (E)
+#define ag_has_include(p) 0
+#define ag_test_include(p, E) (E)
 #endif
 
 #if defined __has_builtin
-#define has_builtin(f) __has_builtin(f)
-#define test_builtin(f, E) (has_builtin(f))
+#define ag_has_builtin(f) __has_builtin(f)
+#define ag_test_builtin(f, E) (ag_has_builtin(f))
 #else
-#define has_builtin(f) 0
-#define test_builtin(f, E) (E)
+#define ag_has_builtin(f) 0
+#define ag_test_builtin(f, E) (E)
 #endif
 
 #ifndef HAVE_C___ATTRIBUTE__
-#define HAVE_C___ATTRIBUTE__ (__GNUC__ || SUNPRO_PREREQ(5,9,0))
+#define HAVE_C___ATTRIBUTE__ (__GNUC__ || AG_SUNPRO_PREREQ(5,9,0))
 #endif
 
 #ifndef HAVE_C___ATTRIBUTE___CONSTRUCTOR
-#define HAVE_C___ATTRIBUTE___CONSTRUCTOR test_attribute(constructor, __GNUC__)
+#define HAVE_C___ATTRIBUTE___CONSTRUCTOR ag_test_attribute(constructor, __GNUC__)
 #endif
 
 #ifndef HAVE_C___ATTRIBUTE___NONNULL
-#define HAVE_C___ATTRIBUTE___NONNULL test_attribute(nonnull, GNUC_PREREQ(3,3,1))
+#define HAVE_C___ATTRIBUTE___NONNULL ag_test_attribute(nonnull, AG_GNUC_PREREQ(3,3,1))
 #endif
 
 #ifndef HAVE_C___ATTRIBUTE___UNUSED
-#define HAVE_C___ATTRIBUTE___UNUSED test_attribute(unused, __GNUC__)
+#define HAVE_C___ATTRIBUTE___UNUSED ag_test_attribute(unused, __GNUC__)
 #endif
 
 #ifndef HAVE_C___ATTRIBUTE___USED
-#define HAVE_C___ATTRIBUTE___USED test_attribute(used, __GNUC__)
+#define HAVE_C___ATTRIBUTE___USED ag_test_attribute(used, __GNUC__)
 #endif
 
 #ifndef HAVE_C___ATTRIBUTE___VISIBILITY
-#define HAVE_C___ATTRIBUTE___VISIBILITY test_attribute(visibility, __GNUC__)
+#define HAVE_C___ATTRIBUTE___VISIBILITY ag_test_attribute(visibility, __GNUC__)
 #endif
 
 #ifndef HAVE_C___HAS_EXTENSION
@@ -143,23 +143,23 @@
 #endif
 
 #ifndef HAVE_C___TYPEOF
-#define HAVE_C___TYPEOF (_MSC_VER || __GNUC__ || SUNPRO_PREREQ(5,9,0))
+#define HAVE_C___TYPEOF (_MSC_VER || __GNUC__ || AG_SUNPRO_PREREQ(5,9,0))
 #endif
 
 #ifndef HAVE_C___TYPEOF__
-#define HAVE_C___TYPEOF__ (__GNUC__ || __xlc__ || SUNPRO_PREREQ(5,9,0))
+#define HAVE_C___TYPEOF__ (__GNUC__ || __xlc__ || AG_SUNPRO_PREREQ(5,9,0))
 #endif
 
 #ifndef HAVE_C__GENERIC
-#define HAVE_C__GENERIC test_extension(c_generic_selections, (GNUC_PREREQ(4,9,0) || __STDC_VERSION__ >= 201112L))
+#define HAVE_C__GENERIC ag_test_extension(c_generic_selections, (AG_GNUC_PREREQ(4,9,0) || __STDC_VERSION__ >= 201112L))
 #endif
 
 #ifndef HAVE_C_STATEMENT_EXPRESSION
-#define HAVE_C_STATEMENT_EXPRESSION (__GNUC__ || SUNPRO_PREREQ(5,9,0))
+#define HAVE_C_STATEMENT_EXPRESSION (__GNUC__ || AG_SUNPRO_PREREQ(5,9,0))
 #endif
 
 #ifndef HAVE_C_TYPEOF
-#define HAVE_C_TYPEOF (__GNUC__ || __xlc__ || SUNPRO_PREREQ(5,9,0))
+#define HAVE_C_TYPEOF (__GNUC__ || __xlc__ || AG_SUNPRO_PREREQ(5,9,0))
 #endif
 
 #ifndef HAVE___ATOMIC_FETCH_ADD
@@ -171,31 +171,31 @@
 #endif
 
 #ifndef HAVE___BUILTIN_CHOOSE_EXPR
-#define HAVE___BUILTIN_CHOOSE_EXPR (GNUC_PREREQ(3,1,1) || __clang__)
+#define HAVE___BUILTIN_CHOOSE_EXPR (AG_GNUC_PREREQ(3,1,1) || __clang__)
 #endif
 
 #ifndef HAVE___BUILTIN_EXPECT
-#define HAVE___BUILTIN_EXPECT test_builtin(__builtin_expect, __GNUC__)
+#define HAVE___BUILTIN_EXPECT ag_test_builtin(__builtin_expect, __GNUC__)
 #endif
 
 #ifndef HAVE___BUILTIN_NAN
-#define HAVE___BUILTIN_NAN test_builtin(__builtin_nan, GNUC_PREREQ(3,3,1))
+#define HAVE___BUILTIN_NAN ag_test_builtin(__builtin_nan, AG_GNUC_PREREQ(3,3,1))
 #endif
 
 #ifndef HAVE___BUILTIN_TRAP
-#define HAVE___BUILTIN_TRAP test_builtin(__builtin_trap, GNUC_PREREQ(3,3,1))
+#define HAVE___BUILTIN_TRAP ag_test_builtin(__builtin_trap, AG_GNUC_PREREQ(3,3,1))
 #endif
 
 #ifndef HAVE___BUILTIN_TYPES_COMPATIBLE_P
-#define HAVE___BUILTIN_TYPES_COMPATIBLE_P (GNUC_PREREQ(3,1,1) || __clang__)
+#define HAVE___BUILTIN_TYPES_COMPATIBLE_P (AG_GNUC_PREREQ(3,1,1) || __clang__)
 #endif
 
 #ifndef HAVE___BUILTIN_UNREACHABLE
-#define HAVE___BUILTIN_UNREACHABLE test_builtin(__builtin_unreachable, GNUC_PREREQ(4,5,0))
+#define HAVE___BUILTIN_UNREACHABLE ag_test_builtin(__builtin_unreachable, AG_GNUC_PREREQ(4,5,0))
 #endif
 
 #ifndef HAVE__STATIC_ASSERT
-#define HAVE__STATIC_ASSERT test_extension(c_static_assert, (GNUC_PREREQ(4,6,0) || __C11FEATURES__ || __STDC_VERSION__ >= 201112L))
+#define HAVE__STATIC_ASSERT ag_test_extension(c_static_assert, (AG_GNUC_PREREQ(4,6,0) || __C11FEATURES__ || __STDC_VERSION__ >= 201112L))
 #endif
 
 
@@ -283,10 +283,12 @@
  */
 #include <limits.h>
 
-#define MUSL_MAYBE (__linux && !__GLIBC__ && !__BIONIC__)
+#ifndef AG_MUSL_MAYBE
+#define AG_MUSL_MAYBE (__linux && !__GLIBC__ && !__BIONIC__)
+#endif
 
 #ifndef HAVE_SYS_PARAM_H
-#define HAVE_SYS_PARAM_H test_include(<sys/param.h>, !MUSL_MAYBE)
+#define HAVE_SYS_PARAM_H ag_test_include(<sys/param.h>, !AG_MUSL_MAYBE)
 #endif
 
 /*
@@ -309,49 +311,49 @@
  *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#define AIX_PREREQ(M, m) (_AIX # M # m)
+#define AG_AIX_PREREQ(M, m) (_AIX # M # m)
 
 #if defined __GLIBC_PREREQ && !defined __UCLIBC__
-#define GLIBC_PREREQ(M, m) (__GLIBC_PREREQ(M, m))
+#define AG_GLIBC_PREREQ(M, m) (__GLIBC_PREREQ(M, m))
 #else
-#define GLIBC_PREREQ(M, m) 0
+#define AG_GLIBC_PREREQ(M, m) 0
 #endif
 
-#define FREEBSD_2VER(M, m, p) (((M) * 100000) + ((m) * 1000) + (p))
-#define FREEBSD_PREREQ(M, m, p) (__FreeBSD__ > 0 && __FreeBSD_version >= FREEBSD_2VER((M), (m), (p)))
+#define AG_FREEBSD_2VER(M, m, p) (((M) * 100000) + ((m) * 1000) + (p))
+#define AG_FREEBSD_PREREQ(M, m, p) (__FreeBSD__ > 0 && __FreeBSD_version >= AG_FREEBSD_2VER((M), (m), (p)))
 
-#define IPHONE_2VER(M, m) (((M) * 10000) + ((M) * 100))
+#define AG_IPHONE_2VER(M, m) (((M) * 10000) + ((M) * 100))
 #if defined __IPHONE_OS_VERSION_MIN_REQUIRED
-#define IPHONE_PREREQ(M, m) (IPHONE_2VER((M), (m)) <= __IPHONE_OS_VERSION_MIN_REQUIRED)
+#define AG_IPHONE_PREREQ(M, m) (AG_IPHONE_2VER((M), (m)) <= __IPHONE_OS_VERSION_MIN_REQUIRED)
 #else
-#define IPHONE_PREREQ(M, m) 0
+#define AG_IPHONE_PREREQ(M, m) 0
 #endif
 
 #if defined __NetBSD_Prereq__
-#define NETBSD_PREREQ(M, m, p) (!__minix && __NetBSD_Prereq__(M, m, p))
+#define AG_NETBSD_PREREQ(M, m, p) (!__minix && __NetBSD_Prereq__(M, m, p))
 #else
-#define NETBSD_PREREQ(M, m, p) 0
+#define AG_NETBSD_PREREQ(M, m, p) 0
 #endif
 
-#define MACOS_2VER_10_9(M, m, p) (((M) * 100) + ((m) * 10))
-#define MACOS_2VER_10_10(M, m, p) (((M) * 10000) + ((M) * 100) + (p))
-#define MACOS_PREREQ_10_10(M, m, p) (((M) > 10 || ((M) == 10 && (m) >= 10)) && MACOS_2VER_10_10((M), (m), (p)) <= __MAC_OS_X_VERSION_MIN_REQUIRED)
-#define MACOS_PREREQ_10_9(M, m, p) (((M) == 10 && (m) < 10) && MACOS_2VER_10_9((M), (m), (p)) <= __MAC_OS_X_VERSION_MIN_REQUIRED)
+#define AG_MACOS_2VER_10_9(M, m, p) (((M) * 100) + ((m) * 10))
+#define AG_MACOS_2VER_10_10(M, m, p) (((M) * 10000) + ((M) * 100) + (p))
+#define AG_MACOS_PREREQ_10_10(M, m, p) (((M) > 10 || ((M) == 10 && (m) >= 10)) && AG_MACOS_2VER_10_10((M), (m), (p)) <= __MAC_OS_X_VERSION_MIN_REQUIRED)
+#define AG_MACOS_PREREQ_10_9(M, m, p) (((M) == 10 && (m) < 10) && AG_MACOS_2VER_10_9((M), (m), (p)) <= __MAC_OS_X_VERSION_MIN_REQUIRED)
 #if defined __MAC_OS_X_VERSION_MIN_REQUIRED
-#define MACOS_PREREQ(M, m, p) (MACOS_PREREQ_10_10((M), (m), (p)) || MACOS_PREREQ_10_9((M), (m), (p)))
+#define AG_MACOS_PREREQ(M, m, p) (AG_MACOS_PREREQ_10_10((M), (m), (p)) || AG_MACOS_PREREQ_10_9((M), (m), (p)))
 #else
-#define MACOS_PREREQ(M, m, p) 0
+#define AG_MACOS_PREREQ(M, m, p) 0
 #endif
 
-#define SUNOS_PREREQ_5_10 (__sun && _DTRACE_VERSION)
-#define SUNOS_PREREQ_5_11 (__sun && F_DUPFD_CLOEXEC)
-#define SUNOS_PREREQ(M, m) (SUNOS_PREREQ_ ## M ## _ ## m)
+#define AG_SUNOS_PREREQ_5_10 (__sun && _DTRACE_VERSION)
+#define AG_SUNOS_PREREQ_5_11 (__sun && F_DUPFD_CLOEXEC)
+#define AG_SUNOS_PREREQ(M, m) (AG_SUNOS_PREREQ_ ## M ## _ ## m)
 
-#define UCLIBC_2VER(M, m, p) (((M) * 10000) + ((m) * 100) + (p))
+#define AG_UCLIBC_2VER(M, m, p) (((M) * 10000) + ((m) * 100) + (p))
 #if defined __UCLIBC__
-#define UCLIBC_PREREQ(M, m, p) (UCLIBC_2VER(__UCLIBC_MAJOR__, __UCLIBC_MINOR__, __UCLIBC_SUBLEVEL__) >= UCLIBC_2VER((M), (m), (p)))
+#define AG_UCLIBC_PREREQ(M, m, p) (AG_UCLIBC_2VER(__UCLIBC_MAJOR__, __UCLIBC_MINOR__, __UCLIBC_SUBLEVEL__) >= AG_UCLIBC_2VER((M), (m), (p)))
 #else
-#define UCLIBC_PREREQ(M, m, p) 0
+#define AG_UCLIBC_PREREQ(M, m, p) 0
 #endif
 
 
@@ -406,12 +408,12 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #ifndef HAVE_DLFCN_H
-#define HAVE_DLFCN_H test_include(<dlfcn.h>, 1)
+#define HAVE_DLFCN_H ag_test_include(<dlfcn.h>, 1)
 #endif
 
 #ifndef HAVE_IFADDRS_H
-#define HAVE_IFADDRS_H_ (!_AIX && (!__sun || SUNOS_PREREQ(5,11)))
-#define HAVE_IFADDRS_H test_include(<ifaddrs.h>, HAVE_IFADDRS_H_)
+#define HAVE_IFADDRS_H_ (!_AIX && (!__sun || AG_SUNOS_PREREQ(5,11)))
+#define HAVE_IFADDRS_H ag_test_include(<ifaddrs.h>, HAVE_IFADDRS_H_)
 #endif
 
 #ifndef HAVE_INTTYPES_H
@@ -419,15 +421,15 @@
 #endif
 
 #ifndef HAVE_MACH_CLOCK_H
-#define HAVE_MACH_CLOCK_H test_include(<mach/clock.h>, __APPLE__)
+#define HAVE_MACH_CLOCK_H ag_test_include(<mach/clock.h>, __APPLE__)
 #endif
 
 #ifndef HAVE_MACH_MACH_H
-#define HAVE_MACH_MACH_H test_include(<mach/mach.h>, __APPLE__)
+#define HAVE_MACH_MACH_H ag_test_include(<mach/mach.h>, __APPLE__)
 #endif
 
 #ifndef HAVE_MACH_MACH_TIME_H
-#define HAVE_MACH_MACH_TIME_H test_include(<mach/mach_time.h>, __APPLE__)
+#define HAVE_MACH_MACH_TIME_H ag_test_include(<mach/mach_time.h>, __APPLE__)
 #endif
 
 #ifndef HAVE_MEMORY_H
@@ -435,12 +437,12 @@
 #endif
 
 #ifndef HAVE_PORT_H
-#define HAVE_PORT_H test_include(<port.h>, SUNOS_PREREQ(5,10))
+#define HAVE_PORT_H ag_test_include(<port.h>, AG_SUNOS_PREREQ(5,10))
 #endif
 
 /* TODO: Maybe test _POSIX_THREADS from <unistd.h>. */
 #ifndef HAVE_PTHREAD_H
-#define HAVE_PTHREAD_H test_include(<pthread.h>, !__minix)
+#define HAVE_PTHREAD_H ag_test_include(<pthread.h>, !__minix)
 #endif
 
 #ifndef HAVE_STDINT_H
@@ -460,34 +462,34 @@
 #endif
 
 #ifndef HAVE_SYS_AUXV_H
-#define HAVE_SYS_AUXV_H_ (GLIBC_PREREQ(2,16) || (!GLIBC_PREREQ(0,0) && __linux) || __sun)
-#define HAVE_SYS_AUXV_H test_include(<sys/auxv.h>, HAVE_SYS_AUXV_H_)
+#define HAVE_SYS_AUXV_H_ (AG_GLIBC_PREREQ(2,16) || (!AG_GLIBC_PREREQ(0,0) && __linux) || __sun)
+#define HAVE_SYS_AUXV_H ag_test_include(<sys/auxv.h>, HAVE_SYS_AUXV_H_)
 #endif
 
 #ifndef HAVE_SYS_EPOLL_H
-#define HAVE_SYS_EPOLL_H test_include(<sys/epoll.h>, __linux)
+#define HAVE_SYS_EPOLL_H ag_test_include(<sys/epoll.h>, __linux)
 #endif
 
 #ifndef HAVE_SYS_EVENT_H
-#define HAVE_SYS_EVENT_H test_include(<sys/event.h>, BSD)
+#define HAVE_SYS_EVENT_H ag_test_include(<sys/event.h>, BSD)
 #endif
 
 #ifndef HAVE_SYS_EVENTFD_H
-#define HAVE_SYS_EVENTFD_H_ (GLIBC_PREREQ(2,8) || (!GLIBC_PREREQ(0,0) && __linux) || EFD_CLOEXEC)
-#define HAVE_SYS_EVENTFD_H test_include(<sys/eventfd.h>, HAVE_SYS_EVENTFD_H_)
+#define HAVE_SYS_EVENTFD_H_ (AG_GLIBC_PREREQ(2,8) || (!AG_GLIBC_PREREQ(0,0) && __linux) || EFD_CLOEXEC)
+#define HAVE_SYS_EVENTFD_H ag_test_include(<sys/eventfd.h>, HAVE_SYS_EVENTFD_H_)
 #endif
 
 #ifndef HAVE_SYS_INOTIFY_H
-#define HAVE_SYS_INOTIFY_H test_include(<sys/inotify.h>, __linux)
+#define HAVE_SYS_INOTIFY_H ag_test_include(<sys/inotify.h>, __linux)
 #endif
 
 #ifndef HAVE_SYS_SIGNALFD_H
-#define HAVE_SYS_SIGNALFD_H_ (GLIBC_PREREQ(2,8) || (!GLIBC_PREREQ(0,0) && __linux) || SFD_CLOEXEC)
-#define HAVE_SYS_SIGNALFD_H test_include(<sys/signalfd.h>, HAVE_SYS_SIGNALFD_H_)
+#define HAVE_SYS_SIGNALFD_H_ (AG_GLIBC_PREREQ(2,8) || (!AG_GLIBC_PREREQ(0,0) && __linux) || SFD_CLOEXEC)
+#define HAVE_SYS_SIGNALFD_H ag_test_include(<sys/signalfd.h>, HAVE_SYS_SIGNALFD_H_)
 #endif
 
 #ifndef HAVE_SYS_SOCKIO_H
-#define HAVE_SYS_SOCKIO_H test_include(<sys/sockio.h>, (__sun || BSD))
+#define HAVE_SYS_SOCKIO_H ag_test_include(<sys/sockio.h>, (__sun || BSD))
 #endif
 
 #ifndef HAVE_SYS_STAT_H
@@ -495,12 +497,12 @@
 #endif
 
 #ifndef HAVE_SYS_SYSCTL_H
-#define HAVE_SYS_SYSCTL_H test_include(<sys/sysctl.h>, (BSD || __GLIBC__))
+#define HAVE_SYS_SYSCTL_H ag_test_include(<sys/sysctl.h>, (BSD || __GLIBC__))
 #endif
 
 #ifndef HAVE_SYS_TIMERFD_H
-#define HAVE_SYS_TIMERFD_H_  (GLIBC_PREREQ(2,8) || (!GLIBC_PREREQ(0,0) && __linux) || TFD_CLOEXEC)
-#define HAVE_SYS_TIMERFD_H test_include(<sys/timerfd.h>, HAVE_SYS_TIMERFD_H_)
+#define HAVE_SYS_TIMERFD_H_  (AG_GLIBC_PREREQ(2,8) || (!AG_GLIBC_PREREQ(0,0) && __linux) || TFD_CLOEXEC)
+#define HAVE_SYS_TIMERFD_H ag_test_include(<sys/timerfd.h>, HAVE_SYS_TIMERFD_H_)
 #endif
 
 #ifndef HAVE_SYS_TYPES_H
@@ -572,7 +574,7 @@
 #endif
 
 #ifndef HAVE_DECL_PTHREAD_MUTEX_ROBUST
-#define HAVE_DECL_PTHREAD_MUTEX_ROBUST (defined PTHREAD_MUTEX_ROBUST || GLIBC_PREREQ(2,12))
+#define HAVE_DECL_PTHREAD_MUTEX_ROBUST (defined PTHREAD_MUTEX_ROBUST || AG_GLIBC_PREREQ(2,12))
 #endif
 
 #ifndef HAVE_DECL_STRERROR_R
@@ -580,7 +582,7 @@
 #endif
 
 #ifndef HAVE_DECL_SYS_SIGLIST
-#define HAVE_DECL_SYS_SIGLIST (!MUSL_MAYBE && !__sun && !_AIX)
+#define HAVE_DECL_SYS_SIGLIST (!AG_MUSL_MAYBE && !__sun && !_AIX)
 #endif
 
 
@@ -590,7 +592,7 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #ifndef HAVE___LIBC_ENABLE_SECURE
-#define HAVE___LIBC_ENABLE_SECURE GLIBC_PREREQ(2,1) /* added to glibc between 2.0.98 and 2.0.99 */
+#define HAVE___LIBC_ENABLE_SECURE AG_GLIBC_PREREQ(2,1) /* added to glibc between 2.0.98 and 2.0.99 */
 #endif
 
 #ifndef HAVE_PROGRAM_INVOCATION_SHORT_NAME
@@ -630,7 +632,7 @@
 #endif
 
 #ifndef HAVE_DLADDR
-#define HAVE_DLADDR (HAVE_DLOPEN && !_AIX && ((!__GLIBC__ && !MUSL_MAYBE) || HAVE__GNU_SOURCE))
+#define HAVE_DLADDR (HAVE_DLOPEN && !_AIX && ((!__GLIBC__ && !AG_MUSL_MAYBE) || HAVE__GNU_SOURCE))
 #endif
 
 #ifndef HAVE_DLOPEN
@@ -646,13 +648,13 @@
 #endif
 
 #ifndef HAVE_DUP3
-#define HAVE_DUP3 (GLIBC_PREREQ(2,9) || FREEBSD_PREREQ(10,0,0) || NETBSD_PREREQ(6,0,0) || UCLIBC_PREREQ(0,9,34) || MUSL_MAYBE || __BIONIC__)
+#define HAVE_DUP3 (AG_GLIBC_PREREQ(2,9) || AG_FREEBSD_PREREQ(10,0,0) || AG_NETBSD_PREREQ(6,0,0) || AG_UCLIBC_PREREQ(0,9,34) || AG_MUSL_MAYBE || __BIONIC__)
 #endif
 
 #ifndef HAVE_FDOPENDIR
 #define HAVE_FDOPENDIR ( \
-	(!__APPLE__ || MACOS_PREREQ(10,10,0) || IPHONE_PREREQ(8,0)) \
-	&& (!__NetBSD__ || NETBSD_PREREQ(6,0,0)) \
+	(!__APPLE__ || AG_MACOS_PREREQ(10,10,0) || AG_IPHONE_PREREQ(8,0)) \
+	&& (!__NetBSD__ || AG_NETBSD_PREREQ(6,0,0)) \
 )
 #endif
 
@@ -665,7 +667,7 @@
 #endif
 
 #ifndef HAVE_EPOLL_CREATE1
-#define HAVE_EPOLL_CREATE1 (HAVE_EPOLL_CREATE && (EPOLL_CLOEXEC || GLIBC_PREREQ(2,9)))
+#define HAVE_EPOLL_CREATE1 (HAVE_EPOLL_CREATE && (EPOLL_CLOEXEC || AG_GLIBC_PREREQ(2,9)))
 #endif
 
 #ifndef HAVE_EPOLL_CTL
@@ -689,7 +691,7 @@
 #endif
 
 #ifndef HAVE_GETENV_R
-#define HAVE_GETENV_R (NETBSD_PREREQ(4,0,0) || __minix)
+#define HAVE_GETENV_R (AG_NETBSD_PREREQ(4,0,0) || __minix)
 #endif
 
 #ifndef HAVE_GETEXECNAME
@@ -701,7 +703,7 @@
 #endif
 
 #ifndef HAVE_GETPROGNAME
-#define HAVE_GETPROGNAME (HAVE_ARC4RANDOM || SUNOS_PREREQ(5,11))
+#define HAVE_GETPROGNAME (HAVE_ARC4RANDOM || AG_SUNOS_PREREQ(5,11))
 #endif
 
 #ifndef HAVE_INOTIFY_INIT
@@ -713,7 +715,7 @@
 #endif
 
 #ifndef HAVE_ISSETUGID
-#define HAVE_ISSETUGID ((!__linux || (MUSL_MAYBE && HAVE__GNU_SOURCE)) && !_AIX)
+#define HAVE_ISSETUGID ((!__linux || (AG_MUSL_MAYBE && HAVE__GNU_SOURCE)) && !_AIX)
 #endif
 
 #if HAVE_SYS_EVENT_H
@@ -729,15 +731,15 @@
 #endif
 
 #ifndef HAVE_KQUEUE1
-#define HAVE_KQUEUE1 (HAVE_KQUEUE && NETBSD_PREREQ(6,0,0))
+#define HAVE_KQUEUE1 (HAVE_KQUEUE && AG_NETBSD_PREREQ(6,0,0))
 #endif
 
 #ifndef HAVE_PACCEPT
-#define HAVE_PACCEPT NETBSD_PREREQ(6,0,0)
+#define HAVE_PACCEPT AG_NETBSD_PREREQ(6,0,0)
 #endif
 
 #ifndef HAVE_PIPE2
-#define HAVE_PIPE2 (GLIBC_PREREQ(2,9) || FREEBSD_PREREQ(10,0,0) || NETBSD_PREREQ(6,0,0) || UCLIBC_PREREQ(0,9,32) || MUSL_MAYBE || __BIONIC__)
+#define HAVE_PIPE2 (AG_GLIBC_PREREQ(2,9) || AG_FREEBSD_PREREQ(10,0,0) || AG_NETBSD_PREREQ(6,0,0) || AG_UCLIBC_PREREQ(0,9,32) || AG_MUSL_MAYBE || __BIONIC__)
 #endif
 
 #ifndef HAVE_PORT_ALERT
@@ -773,11 +775,11 @@
 #endif
 
 #ifndef HAVE_POSIX_FADVISE
-#define HAVE_POSIX_FADVISE (defined POSIX_FADV_NORMAL || GLIBC_PREREQ(2,2) || __sun || MUSL_MAYBE || FREEBSD_PREREQ(9,0,0))
+#define HAVE_POSIX_FADVISE (defined POSIX_FADV_NORMAL || AG_GLIBC_PREREQ(2,2) || __sun || AG_MUSL_MAYBE || AG_FREEBSD_PREREQ(9,0,0))
 #endif
 
 #ifndef HAVE_POSIX_FALLOCATE
-#define HAVE_POSIX_FALLOCATE (GLIBC_PREREQ(2,2) || __sun || MUSL_MAYBE || FREEBSD_PREREQ(9,0,0) || _AIX)
+#define HAVE_POSIX_FALLOCATE (AG_GLIBC_PREREQ(2,2) || __sun || AG_MUSL_MAYBE || AG_FREEBSD_PREREQ(9,0,0) || _AIX)
 #endif
 
 #ifndef HAVE_SIGNALFD
@@ -793,7 +795,7 @@
 #endif
 
 #ifndef HAVE_STATIC_ASSERT
-#if GNUC_PREREQ(0,0,0) && !GNUC_PREREQ(4,6,0)
+#if AG_GNUC_PREREQ(0,0,0) && !AG_GNUC_PREREQ(4,6,0)
 #define HAVE_STATIC_ASSERT 0 /* glibc doesn't check GCC version */
 #else
 #define HAVE_STATIC_ASSERT (defined static_assert)
@@ -821,7 +823,7 @@
 #endif
 
 #ifndef STRERROR_R_CHAR_P
-#define STRERROR_R_CHAR_P ((GLIBC_PREREQ(0,0) || UCLIBC_PREREQ(0,0,0)) && (HAVE__GNU_SOURCE || !(_POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600)))
+#define STRERROR_R_CHAR_P ((AG_GLIBC_PREREQ(0,0) || AG_UCLIBC_PREREQ(0,0,0)) && (HAVE__GNU_SOURCE || !(_POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600)))
 #endif
 
 
