@@ -23,7 +23,7 @@ included with autoconf.
 
 There are two optional defines:
 
-* ```AG_USE_SYSTEM_EXTENSION``` - If defined and non-0 attempts to expose
+* ```AG_USE_SYSTEM_EXTENSIONS``` - If defined and non-0 attempts to expose
 system extensions in the same manner as AC_USE_SYSTEM_EXTENSIONS.
 
 * ```AG_SYS_LARGEFILE``` - If defined and non-0, attempts to _select_ the
