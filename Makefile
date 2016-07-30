@@ -29,8 +29,13 @@ config.c: config.h.auto
 			print "#include <stdio.h>"; \
 			print "#include <signal.h>"; \
 			print "#include <assert.h>"; \
+			print "#if HAVE_SYS_INOTIFY_H"; \
+			print "#include <sys/inotify.h>"; \
+			print "#endif"; \
+			print "#include <sys/socket.h>"; \
 			print "#include <sys/stat.h>"; \
 			print "#include <fcntl.h>"; \
+			print "#include <unistd.h>"; \
 			print "#if HAVE_PTHREAD_H"; \
 			print "#include <pthread.h>"; \
 			print "#endif"; \
