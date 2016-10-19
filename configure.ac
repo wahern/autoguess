@@ -43,20 +43,26 @@ AC_CHECK_HEADERS([m4_normalize([
 	sys/sockio.h sys/sysctl.h sys/timerfd.h
 ])])
 
-# Checks for structure members
+# Checks for types.
+AC_CHECK_TYPES([clockid_t], [], [], [#include <time.h>])
+
+# Checks for structure members.
 AC_CHECK_MEMBERS([struct sockaddr.sa_len], [], [], [#include <sys/socket.h>])
 AC_CHECK_MEMBERS([struct stat.st_rdev, struct stat.st_blksize, struct stat.st_blocks])
 AC_CHECK_MEMBERS([struct stat.st_atim, struct stat.st_mtim, struct stat.st_ctim])
 AC_CHECK_MEMBERS([struct stat.st_atimespec, struct stat.st_mtimespec, struct stat.st_ctimespec])
 
+# Checks for symbolic constants.
+AC_CHECK_DECLS([PTHREAD_MUTEX_ROBUST], [], [], [#include <pthread.h>])
+AC_CHECK_DECLS([CLOCK_MONOTONIC, CLOCK_REALTIME], [], [], [#include <time.h>])
+
 # Checks for library objects.
 AC_CHECK_DECLS([__libc_enable_secure])
 AC_CHECK_FUNCS([__libc_enable_secure])
-AC_CHECK_DECLS([clock_gettime, CLOCK_MONOTONIC, CLOCK_REALTIME], [], [], [#include <time.h>])
+AC_CHECK_DECLS([clock_gettime], [], [], [#include <time.h>])
 AC_CHECK_FUNCS([clock_gettime])
 AC_CHECK_DECLS([program_invocation_short_name], [], [], [#include <errno.h>])
 AC_CHECK_FUNCS([program_invocation_short_name])
-AC_CHECK_DECLS([PTHREAD_MUTEX_ROBUST], [], [], [#include <pthread.h>])
 AC_CHECK_DECLS([sys_siglist], [], [], [#include <signal.h>])
 AC_CHECK_FUNCS([sys_siglist])
 
@@ -73,7 +79,7 @@ AC_CHECK_FUNCS([m4_normalize([
 	timerfd_settime
 ])])
 
-# Check for strerror_r and variant
+# Check for strerror_r and variant.
 AC_FUNC_STRERROR_R
 
 AC_OUTPUT
