@@ -71,7 +71,7 @@ AC_CHECK_FUNCS([sys_siglist])
 
 # Checks for library functions.
 AC_CHECK_FUNCS([m4_normalize([
-	accept4 arc4random arc4random_addrandom arc4random_stir
+	accept4 arc4random arc4random_addrandom arc4random_buf arc4random_stir
 	clock_gettime dladdr dlopen dlsym dup2 dup3 fdopendir epoll_create
 	epoll_create1 epoll_ctl epoll_pwait epoll_wait eventfd getauxval
 	getenv_r getexecname getifaddrs getprogname inotify_init
