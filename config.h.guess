@@ -34,7 +34,7 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #define AG_VENDOR  "william+autoguess@25thandClement.com"
-#define AG_VERSION 20161018L
+#define AG_VERSION 20161019L
 
 
 /*
@@ -528,7 +528,7 @@
 #endif
 
 #ifndef HAVE_STRUCT_STAT_ST_ATIM
-#define HAVE_STRUCT_STAT_ST_ATIM (defined st_atime && ((!__APPLE__ && !__NetBSD__) || !HAVE_STRUCT_STAT_ST_ATIMESPEC))
+#define HAVE_STRUCT_STAT_ST_ATIM (defined st_atime && ((!__APPLE__ && (!__NetBSD__ || AG_NETBSD_PREREQ(7,0,0))) || !HAVE_STRUCT_STAT_ST_ATIMESPEC))
 #endif
 
 #ifndef HAVE_STRUCT_STAT_ST_CTIM
@@ -753,7 +753,7 @@
 #ifndef HAVE_OPENAT
 #define HAVE_OPENAT \
 	((!__APPLE__ || AG_MACOS_PREREQ(10,10,0) || AG_IPHONE_PREREQ(8,0)) \
-	 && (!__NetBSD__))
+	 && (!__NetBSD__ || AG_NETBSD_PREREQ(7,0,0)))
 #endif
 
 #ifndef HAVE_PACCEPT
@@ -801,7 +801,7 @@
 #endif
 
 #ifndef HAVE_POSIX_FALLOCATE
-#define HAVE_POSIX_FALLOCATE (AG_GLIBC_PREREQ(2,2) || __sun || AG_MUSL_MAYBE || AG_FREEBSD_PREREQ(9,0,0) || _AIX)
+#define HAVE_POSIX_FALLOCATE (_AIX || AG_FREEBSD_PREREQ(9,0,0) || AG_GLIBC_PREREQ(2,2) || AG_MUSL_MAYBE || AG_NETBSD_PREREQ(7,0,0) || __sun)
 #endif
 
 #ifndef HAVE_SIGNALFD
