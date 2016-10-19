@@ -347,6 +347,7 @@
 
 #define AG_OPENBSD_PREREQ_0_0 (__OpenBSD__)
 #define AG_OPENBSD_PREREQ_5_5 (OpenBSD >= 201405)
+#define AG_OPENBSD_PREREQ_5_6 (OpenBSD >= 201411)
 #define AG_OPENBSD_PREREQ_5_7 (OpenBSD >= 201505)
 #define AG_OPENBSD_PREREQ(M, m) (AG_OPENBSD_PREREQ_ ## M ## _ ## m)
 
@@ -486,6 +487,11 @@
 
 #ifndef HAVE_SYS_INOTIFY_H
 #define HAVE_SYS_INOTIFY_H ag_test_include(<sys/inotify.h>, __linux__)
+#endif
+
+#ifndef HAVE_SYS_RANDOM_H
+#define HAVE_SYS_RANDOM_H_ (__sun && defined SYS_getrandom) /* requires #include <sys/syscall.h> :( */
+#define HAVE_SYS_RANDOM_H ag_test_include(<sys/random.h>, HAVE_SYS_RANDOM_H_)
 #endif
 
 #ifndef HAVE_SYS_SIGNALFD_H
@@ -731,6 +737,10 @@
 #define HAVE_GETAUXVAL (HAVE_SYS_AUXV_H && !__sun)
 #endif
 
+#ifndef HAVE_GETENTROPY
+#define HAVE_GETENTROPY (AG_OPENBSD_PREREQ(5,6) || (HAVE_SYS_RANDOM_H && __sun))
+#endif
+
 #ifndef HAVE_GETENV_R
 #define HAVE_GETENV_R (AG_NETBSD_PREREQ(4,0,0) || __minix)
 #endif
@@ -745,6 +755,10 @@
 
 #ifndef HAVE_GETPROGNAME
 #define HAVE_GETPROGNAME (HAVE_ARC4RANDOM || AG_SUNOS_PREREQ(5,11))
+#endif
+
+#ifndef HAVE_GETRANDOM
+#define HAVE_GETRANDOM (HAVE_SYS_RANDOM_H && __sun)
 #endif
 
 #ifndef HAVE_INOTIFY_INIT

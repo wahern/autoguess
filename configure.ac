@@ -40,8 +40,8 @@ AC_SEARCH_LIBS([dlopen], [dl])
 AC_CHECK_HEADERS([m4_normalize([
 	dlfcn.h ifaddrs.h mach/mach.h mach/clock.h mach/mach_time.h
 	netinet/in6_var.h port.h pthread.h sys/auxv.h sys/epoll.h
-	sys/event.h sys/eventfd.h sys/inotify.h sys/param.h sys/signalfd.h
-	sys/sockio.h sys/syscall.h sys/sysctl.h sys/timerfd.h
+	sys/event.h sys/eventfd.h sys/inotify.h sys/param.h sys/random.h
+	sys/signalfd.h sys/sockio.h sys/syscall.h sys/sysctl.h sys/timerfd.h
 ])])
 
 # Checks for types.
@@ -71,15 +71,16 @@ AC_CHECK_FUNCS([sys_siglist])
 
 # Checks for library functions.
 AC_CHECK_FUNCS([m4_normalize([
-	accept4 arc4random arc4random_addrandom arc4random_buf arc4random_stir
-	clock_gettime dladdr dlopen dlsym dup2 dup3 fdopendir epoll_create
-	epoll_create1 epoll_ctl epoll_pwait epoll_wait eventfd getauxval
-	getenv_r getexecname getifaddrs getprogname inotify_init
-	inotify_init1 issetugid kevent kqueue kqueue1 openat paccept pipe2
-	port_alert port_associate port_create port_dissociate port_get
-	port_getn port_send port_sendn posix_fadvise posix_fallocate
-	signalfd sigtimedwait sigwait syscall sysctl timerfd_create
-	timerfd_gettime timerfd_settime
+	accept4 arc4random arc4random_addrandom arc4random_buf
+	arc4random_stir clock_gettime dladdr dlopen dlsym dup2 dup3
+	fdopendir epoll_create epoll_create1 epoll_ctl epoll_pwait
+	epoll_wait eventfd getauxval getentropy getenv_r getexecname
+	getifaddrs getprogname getrandom inotify_init inotify_init1
+	issetugid kevent kqueue kqueue1 openat paccept pipe2 port_alert
+	port_associate port_create port_dissociate port_get port_getn
+	port_send port_sendn posix_fadvise posix_fallocate signalfd
+	sigtimedwait sigwait syscall sysctl timerfd_create timerfd_gettime
+	timerfd_settime
 ])])
 
 # Check for strerror_r and variant.
