@@ -34,7 +34,7 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #define AG_VENDOR  "william+autoguess@25thandClement.com"
-#define AG_VERSION 20160729L
+#define AG_VERSION 20161018L
 
 
 /*
@@ -569,6 +569,18 @@
 #define HAVE___DECL_LIBC_ENABLE_SECURE 0
 #endif
 
+#ifndef HAVE_DECL_CLOCK_GETTIME
+#define HAVE_DECL_CLOCK_GETTIME HAVE_DECL_CLOCK_MONOTONIC
+#endif
+
+#ifndef HAVE_DECL_CLOCK_MONOTONIC
+#define HAVE_DECL_CLOCK_MONOTONIC (defined CLOCK_MONOTONIC)
+#endif
+
+#ifndef HAVE_DECL_CLOCK_REALTIME
+#define HAVE_DECL_CLOCK_REALTIME (defined CLOCK_REALTIME)
+#endif
+
 #ifndef HAVE_DECL_PROGRAM_INVOCATION_SHORT_NAME
 #define HAVE_DECL_PROGRAM_INVOCATION_SHORT_NAME (__linux__ && HAVE__GNU_SOURCE)
 #endif
@@ -628,7 +640,7 @@
 #endif
 
 #ifndef HAVE_CLOCK_GETTIME
-#define HAVE_CLOCK_GETTIME (!__APPLE__)
+#define HAVE_CLOCK_GETTIME (!__APPLE__ || AG_MACOS_PREREQ(10,12,0))
 #endif
 
 #ifndef HAVE_DLADDR
@@ -801,7 +813,7 @@
 #endif
 
 #ifndef HAVE_STATIC_ASSERT
-#if AG_GNUC_PREREQ(0,0,0) && !AG_GNUC_PREREQ(4,6,0)
+#if AG_GLIBC_PREREQ(0,0) && !HAVE__STATIC_ASSERT
 #define HAVE_STATIC_ASSERT 0 /* glibc doesn't check GCC version */
 #else
 #define HAVE_STATIC_ASSERT (defined static_assert)

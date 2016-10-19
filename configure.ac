@@ -52,11 +52,13 @@ AC_CHECK_MEMBERS([struct stat.st_atimespec, struct stat.st_mtimespec, struct sta
 # Checks for library objects.
 AC_CHECK_DECLS([__libc_enable_secure])
 AC_CHECK_FUNCS([__libc_enable_secure])
-AC_CHECK_DECLS([sys_siglist], [], [], [#include <signal.h>])
-AC_CHECK_FUNCS([sys_siglist])
+AC_CHECK_DECLS([clock_gettime, CLOCK_MONOTONIC, CLOCK_REALTIME], [], [], [#include <time.h>])
+AC_CHECK_FUNCS([clock_gettime])
 AC_CHECK_DECLS([program_invocation_short_name], [], [], [#include <errno.h>])
 AC_CHECK_FUNCS([program_invocation_short_name])
 AC_CHECK_DECLS([PTHREAD_MUTEX_ROBUST], [], [], [#include <pthread.h>])
+AC_CHECK_DECLS([sys_siglist], [], [], [#include <signal.h>])
+AC_CHECK_FUNCS([sys_siglist])
 
 # Checks for library functions.
 AC_CHECK_FUNCS([m4_normalize([

@@ -26,19 +26,22 @@ config.c: config.h.auto
 	(cat; printf "STRERROR_R_CHAR_P") | awk ' \
 		BEGIN { \
 			print "#include \"config.h\""; \
-			print "#include <stdio.h>"; \
-			print "#include <signal.h>"; \
+			print ""; \
 			print "#include <assert.h>"; \
+			print "#include <signal.h>"; \
+			print "#include <stdio.h>"; \
+			print "#include <time.h>"; \
+			print ""; \
+			print "#include <fcntl.h>"; \
+			print "#if HAVE_PTHREAD_H"; \
+			print "#include <pthread.h>"; \
+			print "#endif"; \
 			print "#if HAVE_SYS_INOTIFY_H"; \
 			print "#include <sys/inotify.h>"; \
 			print "#endif"; \
 			print "#include <sys/socket.h>"; \
 			print "#include <sys/stat.h>"; \
-			print "#include <fcntl.h>"; \
 			print "#include <unistd.h>"; \
-			print "#if HAVE_PTHREAD_H"; \
-			print "#include <pthread.h>"; \
-			print "#endif"; \
 			print "int main(void) {"; } \
 		{ \
 			print "#if "$$1; \
