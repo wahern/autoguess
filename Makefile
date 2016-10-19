@@ -41,6 +41,12 @@ config.c: config.h.auto
 			print "#endif"; \
 			print "#include <sys/socket.h>"; \
 			print "#include <sys/stat.h>"; \
+			print "#if HAVE_SYS_SYSCALL_H"; \
+			print "#include <sys/syscall.h>"; \
+			print "#endif"; \
+			print "#if HAVE_SYS_SYSCTL_H"; \
+			print "#include <sys/sysctl.h>"; \
+			print "#endif"; \
 			print "#include <unistd.h>"; \
 			print "int main(void) {"; } \
 		{ \

@@ -41,7 +41,7 @@ AC_CHECK_HEADERS([m4_normalize([
 	dlfcn.h ifaddrs.h mach/mach.h mach/clock.h mach/mach_time.h
 	netinet/in6_var.h port.h pthread.h sys/auxv.h sys/epoll.h
 	sys/event.h sys/eventfd.h sys/inotify.h sys/param.h sys/signalfd.h
-	sys/sockio.h sys/sysctl.h sys/timerfd.h
+	sys/sockio.h sys/syscall.h sys/sysctl.h sys/timerfd.h
 ])])
 
 # Checks for types.
@@ -54,8 +54,10 @@ AC_CHECK_MEMBERS([struct stat.st_atim, struct stat.st_mtim, struct stat.st_ctim]
 AC_CHECK_MEMBERS([struct stat.st_atimespec, struct stat.st_mtimespec, struct stat.st_ctimespec])
 
 # Checks for symbolic constants.
-AC_CHECK_DECLS([PTHREAD_MUTEX_ROBUST], [], [], [#include <pthread.h>])
 AC_CHECK_DECLS([CLOCK_MONOTONIC, CLOCK_REALTIME], [], [], [#include <time.h>])
+AC_CHECK_DECLS([PTHREAD_MUTEX_ROBUST], [], [], [#include <pthread.h>])
+AC_CHECK_DECLS([RANDOM_UUID], [], [], [#include <sys/sysctl.h>])
+AC_CHECK_DECLS([SYS_getrandom], [], [], [#include <sys/syscall.h>])
 
 # Checks for library objects.
 AC_CHECK_DECLS([__libc_enable_secure])
@@ -76,8 +78,8 @@ AC_CHECK_FUNCS([m4_normalize([
 	inotify_init1 issetugid kevent kqueue kqueue1 openat paccept pipe2
 	port_alert port_associate port_create port_dissociate port_get
 	port_getn port_send port_sendn posix_fadvise posix_fallocate
-	signalfd sigtimedwait sigwait sysctl timerfd_create timerfd_gettime
-	timerfd_settime
+	signalfd sigtimedwait sigwait syscall sysctl timerfd_create
+	timerfd_gettime timerfd_settime
 ])])
 
 # Check for strerror_r and variant.

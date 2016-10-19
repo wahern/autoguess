@@ -501,6 +501,11 @@
 #define HAVE_SYS_STAT_H 1
 #endif
 
+#ifndef HAVE_SYS_SYSCALL_H
+#define HAVE_SYS_SYSCALL_H_ (BSD || __linux__ || __sun)
+#define HAVE_SYS_SYSCALL_H ag_test_include(<sys/syscall.h>, HAVE_SYS_SYSCALL_H_)
+#endif
+
 #ifndef HAVE_SYS_SYSCTL_H
 #define HAVE_SYS_SYSCTL_H ag_test_include(<sys/sysctl.h>, (BSD || __GLIBC__))
 #endif
@@ -598,12 +603,20 @@
 #define HAVE_DECL_PTHREAD_MUTEX_ROBUST (defined PTHREAD_MUTEX_ROBUST || AG_GLIBC_PREREQ(2,12))
 #endif
 
+#ifndef HAVE_DECL_RANDOM_UUID
+#define HAVE_DECL_RANDOM_UUID (HAVE_SYS_SYSCTL_H && defined __linux__) /* RANDOM_UUID is an enum, not macro */
+#endif
+
 #ifndef HAVE_DECL_STRERROR_R
 #define HAVE_DECL_STRERROR_R 1
 #endif
 
 #ifndef HAVE_DECL_SYS_SIGLIST
 #define HAVE_DECL_SYS_SIGLIST (!AG_MUSL_MAYBE && !__sun && !_AIX)
+#endif
+
+#ifndef HAVE_DECL_SYS_GETRANDOM
+#define HAVE_DECL_SYS_GETRANDOM (defined SYS_getrandom)
 #endif
 
 
@@ -831,6 +844,10 @@
 
 #ifndef HAVE_STRERROR_R
 #define HAVE_STRERROR_R 1
+#endif
+
+#ifndef HAVE_SYSCALL
+#define HAVE_SYSCALL HAVE_SYS_SYSCALL_H
 #endif
 
 #ifndef HAVE_SYSCTL
