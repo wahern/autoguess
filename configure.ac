@@ -31,6 +31,7 @@ AG_CHECK_CC
 # Checks for libraries.
 AC_SEARCH_LIBS([clock_gettime], [rt])
 AC_SEARCH_LIBS([sigtimedwait], [rt])
+AC_SEARCH_LIBS([sigwait], [pthread])
 AC_SEARCH_LIBS([posix_fadvise], [rt])
 AC_SEARCH_LIBS([posix_fallocate], [rt])
 AC_SEARCH_LIBS([dlopen], [dl])
