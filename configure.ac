@@ -76,11 +76,11 @@ AC_CHECK_FUNCS([m4_normalize([
 	fdopendir epoll_create epoll_create1 epoll_ctl epoll_pwait
 	epoll_wait eventfd getauxval getentropy getenv_r getexecname
 	getifaddrs getprogname getrandom inotify_init inotify_init1
-	issetugid kevent kqueue kqueue1 openat paccept pipe2 port_alert
-	port_associate port_create port_dissociate port_get port_getn
-	port_send port_sendn posix_fadvise posix_fallocate signalfd
-	sigtimedwait sigwait syscall sysctl timerfd_create timerfd_gettime
-	timerfd_settime
+	issetugid kevent kqueue kqueue1 mkdirat mkfifoat openat paccept
+	pipe2 port_alert port_associate port_create port_dissociate port_get
+	port_getn port_send port_sendn posix_fadvise posix_fallocate
+	renameat signalfd sigtimedwait sigwait syscall sysctl timerfd_create
+	timerfd_gettime timerfd_settime unlinkat
 ])])
 
 # Check for strerror_r and variant.

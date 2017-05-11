@@ -34,7 +34,7 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #define AG_VENDOR  "william+autoguess@25thandClement.com"
-#define AG_VERSION 20161019L
+#define AG_VERSION 20170511L
 
 
 /*
@@ -795,6 +795,14 @@
 	 && (!__NetBSD__ || AG_NETBSD_PREREQ(7,0,0)))
 #endif
 
+#ifndef HAVE_MKDIRAT
+#define HAVE_MKDIRAT HAVE_OPENAT
+#endif
+
+#ifndef HAVE_MKFIFOAT
+#define HAVE_MKFIFOAT (!__APPLE__ && (!__NetBSD__ || AG_NETBSD_PREREQ(7,0,0)))
+#endif
+
 #ifndef HAVE_PACCEPT
 #define HAVE_PACCEPT AG_NETBSD_PREREQ(6,0,0)
 #endif
@@ -843,6 +851,10 @@
 #define HAVE_POSIX_FALLOCATE (_AIX || AG_FREEBSD_PREREQ(9,0,0) || AG_GLIBC_PREREQ(2,2) || AG_MUSL_MAYBE || AG_NETBSD_PREREQ(7,0,0) || __sun)
 #endif
 
+#ifndef HAVE_RENAMEAT
+#define HAVE_RENAMEAT HAVE_OPENAT
+#endif
+
 #ifndef HAVE_SIGNALFD
 #define HAVE_SIGNALFD HAVE_SYS_SIGNALFD_H
 #endif
@@ -885,6 +897,10 @@
 
 #ifndef HAVE_TIMERFD_SETTIME
 #define HAVE_TIMERFD_SETTIME HAVE_TIMERFD_CREATE
+#endif
+
+#ifndef HAVE_UNLINKAT
+#define HAVE_UNLINKAT HAVE_OPENAT
 #endif
 
 #ifndef STRERROR_R_CHAR_P
