@@ -38,6 +38,11 @@ BOOL, = false
 IF,true = true
 IF,1 = true
 
+AND,true,true = true
+AND,true,false = false
+AND,false,true = false
+AND,false,false = false
+
 OR,true,true = true
 OR,true,false = true
 OR,false,true = true
@@ -121,32 +126,21 @@ SOEXT.shared = $(SOEXT.shared.if.darwin.$(OS.is.darwin))
 
 SOFLAGS = $(SOFLAGS.shared)
 
-# Usage: $(SOFLAGS.bundle) - for creating shared objects to be dlopen'd
+# linker flag for creating shared objects to be dlopen'd
 SOFLAGS.bundle.if.aix.true = -Wl,-G
 SOFLAGS.bundle.if.aix.false = $(SOFLAGS.bundle.if.darwin.$(OS.is.darwin))
 SOFLAGS.bundle.if.darwin.true = -bundle
 SOFLAGS.bundle.if.darwin.false = -shared
 SOFLAGS.bundle = $(SOFLAGS.bundle.if.aix.$(OS.is.aix))
 
-# Usage: $(SOFLAGS.install_name:%=% @rpath/$(SONAME))
-#SOFLAGS.install_name = $(OS.if.darwin:%=-install_name)
-
-SOFLAGS.install_name = $(IF,$(OS.is.darwin):%=-install_name)
-
-# Usage: $(SOFLAGS.shared) - for creating regular shared libraries
+# linker flag for creating regular shared libraries
 SOFLAGS.shared.if.darwin.true = -dynamiclib
 SOFLAGS.shared.if.darwin.false = -shared
 SOFLAGS.shared = $(SOFLAGS.shared.if.darwin.$(OS.is.darwin))
 
-# Usage: $(SOFLAGS.soname:%=%$(SONAME))
-SOFLAGS.soname.if.aix.true =
-SOFLAGS.soname.if.aix.false = $(SOFLAGS.soname.if.darwin.$(OS.is.darwin))
-SOFLAGS.soname.if.darwin.true =
-SOFLAGS.soname.if.darwin.false = -Wl,-soname,
-SOFLAGS.soname = $(SOFLAGS.soname.if.aix.$(OS.is.aix))
-
-# Usage: $(SOFLAGS.undefined:%=% dynamic_lookup)
-SOFLAGS.undefined = $(IF,$(OS.is.darwin):%=-undefined)
+SOFLAGS.have.install_name = $(OS.is.darwin)
+SOFLAGS.have.soname = $(NOT,$(OR,$(OS.is.aix),$(OS.is.darwin)))
+SOFLAGS.have.undefined = $(OS.is.darwin)
 
 guess-show:
 	@echo OS="$(OS)"
@@ -160,6 +154,6 @@ guess-show:
 	@echo SOEXT.bundle="$(SOEXT.bundle)"
 	@echo SOEXT.shared="$(SOEXT.shared)"
 	@echo SOFLAGS.bundle="$(SOFLAGS.bundle)"
-	@echo SOFLAGS.install_name="$(SOFLAGS.install_name:%=% @rpath/libfoo.so)"
-	@echo SOFLAGS.soname="$(SOFLAGS.soname:%=%libfoo.so)"
-	@echo SOFLAGS.undefined="$(SOFLAGS.undefined:%=% dynamic_lookup)"
+	@echo SOFLAGS.have.install_name="$(SOFLAGS.have.install_name)"
+	@echo SOFLAGS.have.soname="$(SOFLAGS.have.soname)"
+	@echo SOFLAGS.have.undefined="$(SOFLAGS.have.undefined)"
