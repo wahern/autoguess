@@ -741,7 +741,7 @@
 #endif
 
 #ifndef HAVE_GETENTROPY
-#define HAVE_GETENTROPY (AG_OPENBSD_PREREQ(5,6) || (HAVE_SYS_RANDOM_H && (__sun || __APPLE__)))
+#define HAVE_GETENTROPY (AG_OPENBSD_PREREQ(5,6) || (HAVE_SYS_RANDOM_H && __sun) || AG_MACOS_PREREQ(10,12,0))
 #endif
 
 #ifndef HAVE_GETENV_R
