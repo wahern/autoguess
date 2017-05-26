@@ -491,7 +491,7 @@
 
 #ifndef HAVE_SYS_RANDOM_H
 /* NOTE: SYS_getentropy and SYS_getrandom require <sys/syscall.h> :( */
-#define HAVE_SYS_RANDOM_H_APPLE_ (__APPLE__ && defined SYS_getentropy)
+#define HAVE_SYS_RANDOM_H_APPLE_ ((__APPLE__ && defined SYS_getentropy) || AG_MACOS_PREREQ(10,12,0))
 #define HAVE_SYS_RANDOM_H_SUN_ (__sun && defined SYS_getrandom)
 #define HAVE_SYS_RANDOM_H_ (HAVE_SYS_RANDOM_H_SUN_ || HAVE_SYS_RANDOM_H_APPLE_)
 #define HAVE_SYS_RANDOM_H ag_test_include(<sys/random.h>, HAVE_SYS_RANDOM_H_)
