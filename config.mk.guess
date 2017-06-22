@@ -1,0 +1,181 @@
+# ==========================================================================
+# config.mk.guess - Portable Make feature detection from autoguess project
+# --------------------------------------------------------------------------
+# Copyright (c) 2017  William Ahern
+#
+# Permission is hereby granted, free of charge, to any person obtaining a
+# copy of this software and associated documentation files (the
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
+# distribute, sublicense, and/or sell copies of the Software, and to permit
+# persons to whom the Software is furnished to do so, subject to the
+# following conditions:
+#
+# The above copyright notice and this permission notice shall be included
+# in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+# OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+# NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+# DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+# OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+# USE OR OTHER DEALINGS IN THE SOFTWARE.
+# --------------------------------------------------------------------------
+# PORTING NOTES
+#
+# MACRO:sh=) In MACRO:sh= assignments (not $(MACRO:sh) substitutions),
+#   Solaris make does not subject the shell command to macro substitution.
+#
+# ==========================================================================
+
+BOOL,true = true
+BOOL,1 = true
+BOOL,false = false
+BOOL,0 = false
+BOOL, = false
+
+IF,true = true
+IF,1 = true
+
+OR,true,true = true
+OR,true,false = true
+OR,false,true = true
+OR,false,false = false
+
+NOT,true = false
+NOT,false = true
+
+XOR,true,true = false
+XOR,true,false = true
+XOR,false,true = true
+XOR,false,false = false
+
+OS.exec = uname -s | tr '[A-Z]' '[a-z]'
+OS = $(shell $(OS.exec))$(OS.exec:sh)
+OS.aix.test.aix = true
+OS.bsd.test.bsd = true
+OS.bsd.test.darwin = true
+OS.darwin.test.darwin = true
+OS.freebsd.test.freebsd = true
+OS.linux.test.linux = true
+OS.openbsd.test.openbsd = true
+OS.netbsd.test.netbsd = true
+OS.sunos.test.sunos = true
+OS.is.aix = $(BOOL,$(OS.aix.test.$(OS)))
+OS.is.bsd = $(BOOL,$(OS.bsd.test.$(OS:%bsd=bsd)))
+OS.is.darwin = $(BOOL,$(OS.darwin.test.$(OS)))
+OS.is.freebsd = $(BOOL,$(OS.freebsd.test.$(OS)))
+OS.is.linux = $(BOOL,$(OS.linux.test.$(OS)))
+OS.is.openbsd = $(BOOL,$(OS.openbsd.test.$(OS)))
+OS.is.netbsd = $(BOOL,$(OS.netbsd.test.$(OS)))
+OS.is.sunos = $(BOOL,$(OS.sunos.test.$(OS)))
+.PHONY: $(eval OS := $(OS))
+
+CC.vendor.exec = printf "\043if defined __SUNPRO_C\n@sunpro@\n\043elif defined __clang__\n@clang@\n\043elif defined __GNUC__\n@gcc@\n\043else\n@other@\n\043endif\n" | $(CC) -E - | sed -ne '/^@[a-z][a-z]*@.*/{p;q;}' | sed -ne 's/^@\([^@]*\)@.*/\1/p'
+CC.vendor = $(shell $(CC.vendor.exec))$(CC.vendor.exec:sh)
+CC.clang.test.clang = true
+CC.gcc.test.gcc = true
+CC.sunpro.test.sunpro = true
+CC.is.clang = $(BOOL,$(CC.clang.test.$(CC.vendor)))
+CC.is.gcc = $(BOOL,$(CC.gcc.test.$(CC.vendor)))
+CC.is.sunpro = $(BOOL,$(CC.sunpro.test.$(CC.vendor)))
+.PHONY: $(eval CC.vendor := $(CC.vendor))
+
+DL.libs.if.bsd.true =
+DL.libs.if.bsd.false = -ldl
+DL.libs = $(DL.libs.if.bsd.$(OS.is.bsd))
+
+NSL.libs.if.sunos.true = -lnsl
+NSL.libs.if.sunos.false =
+NSL.libs = $(NSL.libs.if.sunos.$(OS.is.sunos))
+
+PIC.cflags.if.gcc.true = -fPIC
+PIC.cflags.if.gcc.false = $(PIC.cflags.if.sunpro.$(CC.is.sunpro))
+PIC.cflags.if.sunpro.true = -xcode=pic32
+PIC.cflags.if.sunpro.false =
+PIC.cflags = $(PIC.cflags.if.gcc.$(OR,$(CC.is.gcc),$(CC.is.clang)))
+
+PIE.ldflags.if.gcc.true = -pie
+PIE.ldflags.if.gcc.false =
+PIE.ldflags = $(PIE.ldflags.if.gcc.$(OR,$(CC.is.gcc),$(CC.is.clang)))
+
+RT.libs.if.linux.true = -lrt
+RT.libs.if.linux.false =
+RT.libs = $(RT.libs.if.linux.$(OS.is.linux))
+
+SOCKET.libs.if.sunos.true = -lsocket
+SOCKET.libs.if.sunos.false =
+SOCKET.libs = $(SOCKET.libs.if.sunos.$(OS.is.sunos))
+
+SOEXT = $(SOEXT.shared)
+
+# NOTE: .so more common than .bundle on macOS
+SOEXT.bundle.if.darwin.true = so
+SOEXT.bundle.if.darwin.false = so
+SOEXT.bundle = $(SOEXT.bundle.if.darwin.$(OS.is.darwin))
+
+SOEXT.shared.if.darwin.true = dylib
+SOEXT.shared.if.darwin.false = so
+SOEXT.shared = $(SOEXT.shared.if.darwin.$(OS.is.darwin))
+
+SOFLAGS = $(SOFLAGS.shared)
+
+# Usage: $(SOFLAGS.bundle) - for creating shared objects to be dlopen'd
+SOFLAGS.bundle.if.aix.true = -Wl,-G
+SOFLAGS.bundle.if.aix.false = $(SOFLAGS.bundle.if.darwin.$(OS.is.darwin))
+SOFLAGS.bundle.if.darwin.true = -bundle
+SOFLAGS.bundle.if.darwin.false = -shared
+SOFLAGS.bundle = $(SOFLAGS.bundle.if.aix.$(OS.is.aix))
+
+# Usage: $(SOFLAGS.install_name:%=% @rpath/$(SONAME))
+SOFLAGS.install_name = $(IF,$(OS.is.darwin):%=-install_name)
+
+# Usage: $(SOFLAGS.shared) - for creating regular shared libraries
+SOFLAGS.shared.if.darwin.true = -dynamiclib
+SOFLAGS.shared.if.darwin.false = -shared
+SOFLAGS.shared = $(SOFLAGS.shared.if.darwin.$(OS.is.darwin))
+
+# Usage: $(SOFLAGS.soname:%=%$(SONAME))
+SOFLAGS.soname.if.aix.true =
+SOFLAGS.soname.if.aix.false = $(SOFLAGS.soname.if.darwin.$(OS.is.darwin))
+SOFLAGS.soname.if.darwin.true =
+SOFLAGS.soname.if.darwin.false = -Wl,-soname,
+SOFLAGS.soname = $(SOFLAGS.soname.if.aix.$(OS.is.aix))
+
+# Usage: $(SOFLAGS.undefined:%=% dynamic_lookup)
+SOFLAGS.undefined = $(IF,$(OS.is.darwin):%=-undefined)
+
+prefix = /usr/local
+bindir = $(prefix)/bin
+datadir = $(prefix)/share
+includedir = $(prefix)/include
+libdir = $(prefix)/lib
+libexecdir = $(prefix)/libexec
+localstatedir = $(prefix)/var
+runstatedir = $(localstatedir)/run
+sbindir = $(prefix)/sbin
+sysconfdir = $(prefix)/etc
+
+INSTALL = install
+INSTALL_DATA = $(INSTALL) -m644
+INSTALL_PROGRAM = $(INSTALL) -m755
+MKDIR = mkdir
+MKDIR_P = $(MKDIR) -p
+RM = rm
+
+show:
+	@echo OS="$(OS)"
+	@echo CC.vendor="$(CC.vendor)"
+	@echo DL.libs="$(DL.libs)"
+	@echo NSL.libs="$(NSL.libs)"
+	@echo PIC.cflags="$(PIC.cflags)"
+	@echo PIE.ldflags="$(PIE.ldflags)"
+	@echo RT.libs="$(RT.libs)"
+	@echo SOCKET.libs="$(SOCKET.libs)"
+	@echo SOEXT.bundle="$(SOEXT.bundle)"
+	@echo SOEXT.shared="$(SOEXT.shared)"
+	@echo SOFLAGS.bundle="$(SOFLAGS.bundle)"
+	@echo SOFLAGS.install_name="$(SOFLAGS.install_name:%=% @rpath/libfoo.so)"
+	@echo SOFLAGS.soname="$(SOFLAGS.soname:%=%libfoo.so)"
+	@echo SOFLAGS.undefined="$(SOFLAGS.undefined:%=% dynamic_lookup)"
