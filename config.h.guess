@@ -34,7 +34,7 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #define AG_VENDOR  "william+autoguess@25thandClement.com"
-#define AG_VERSION 20170525L
+#define AG_VERSION 20170830L
 
 
 /*
@@ -764,6 +764,11 @@
 #define HAVE_GETRANDOM (HAVE_SYS_RANDOM_H && __sun)
 #endif
 
+#ifndef HAVE_FSTATAT
+#define HAVE_FSTATAT HAVE_OPENAT
+#endif
+
+
 #ifndef HAVE_INOTIFY_INIT
 #define HAVE_INOTIFY_INIT HAVE_SYS_INOTIFY_H
 #endif
@@ -854,6 +859,10 @@
 #define HAVE_POSIX_FALLOCATE (_AIX || AG_FREEBSD_PREREQ(9,0,0) || AG_GLIBC_PREREQ(2,2) || AG_MUSL_MAYBE || AG_NETBSD_PREREQ(7,0,0) || __sun)
 #endif
 
+#ifndef HAVE_READLINKAT
+#define HAVE_READLINKAT HAVE_OPENAT
+#endif
+
 #ifndef HAVE_RENAMEAT
 #define HAVE_RENAMEAT HAVE_OPENAT
 #endif
@@ -880,6 +889,10 @@
 
 #ifndef HAVE_STRERROR_R
 #define HAVE_STRERROR_R 1
+#endif
+
+#ifndef HAVE_SYMLINKAT
+#define HAVE_SYMLINKAT HAVE_OPENAT
 #endif
 
 #ifndef HAVE_SYSCALL
