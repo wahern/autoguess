@@ -34,7 +34,7 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #define AG_VENDOR  "william+autoguess@25thandClement.com"
-#define AG_VERSION 20170511L
+#define AG_VERSION 20170902L
 
 
 /*
@@ -288,7 +288,7 @@
 #endif
 
 #ifndef HAVE_SYS_PARAM_H
-#define HAVE_SYS_PARAM_H ag_test_include(<sys/param.h>, !AG_MUSL_MAYBE)
+#define HAVE_SYS_PARAM_H ag_test_include(<sys/param.h>, !AG_MUSL_MAYBE && !_WIN32)
 #endif
 
 /*
@@ -414,7 +414,7 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #ifndef HAVE_DLFCN_H
-#define HAVE_DLFCN_H ag_test_include(<dlfcn.h>, 1)
+#define HAVE_DLFCN_H ag_test_include(<dlfcn.h>, !_WIN32)
 #endif
 
 #ifndef HAVE_IFADDRS_H
