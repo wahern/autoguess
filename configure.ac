@@ -55,8 +55,12 @@ AC_CHECK_MEMBERS([struct stat.st_atimespec, struct stat.st_mtimespec, struct sta
 
 # Checks for symbolic constants.
 AC_CHECK_DECLS([CLOCK_MONOTONIC, CLOCK_REALTIME], [], [], [#include <time.h>])
+AC_CHECK_DECLS([EPOLL_CLOEXEC], [], [], [#include <sys/epoll.h>])
+AC_CHECK_DECLS([IN_CLOEXEC], [], [], [#include <sys/inotify.h>])
+AC_CHECK_DECLS([POSIX_FADV_NORMAL], [], [], [#include <fcntl.h>])
 AC_CHECK_DECLS([PTHREAD_MUTEX_ROBUST], [], [], [#include <pthread.h>])
 AC_CHECK_DECLS([RANDOM_UUID], [], [], [#include <sys/sysctl.h>])
+AC_CHECK_DECLS([SOCK_CLOEXEC], [], [], [#include <sys/socket.h>])
 AC_CHECK_DECLS([SYS_getrandom], [], [], [#include <sys/syscall.h>])
 
 # Checks for library objects.
