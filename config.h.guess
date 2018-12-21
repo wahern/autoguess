@@ -131,11 +131,15 @@
 #endif
 
 #ifndef HAVE_C___HAS_EXTENSION
-#define HAVE_C___HAS_EXTENSION (defined __has_extension)
+#if defined __has_extension
+#define HAVE_C___HAS_EXTENSION 1
+#endif
 #endif
 
 #ifndef HAVE_C___HAS_INCLUDE
-#define HAVE_C___HAS_INCLUDE (defined __has_include)
+#if defined __has_include
+#define HAVE_C___HAS_INCLUDE 1
+#endif
 #endif
 
 #ifndef HAVE_C___EXTENSION__
@@ -163,7 +167,9 @@
 #endif
 
 #ifndef HAVE___ATOMIC_FETCH_ADD
-#define HAVE___ATOMIC_FETCH_ADD (defined __ATOMIC_RELAXED)
+#if defined __ATOMIC_RELAXED
+#define HAVE___ATOMIC_FETCH_ADD 1
+#endif
 #endif
 
 #ifndef HAVE___ATOMIC_FETCH_SUB
@@ -481,7 +487,7 @@
 #endif
 
 #ifndef HAVE_SYS_EVENTFD_H
-#define HAVE_SYS_EVENTFD_H_ (AG_GLIBC_PREREQ(2,8) || (!AG_GLIBC_PREREQ(0,0) && __linux__) || defined EFD_CLOEXEC)
+#define HAVE_SYS_EVENTFD_H_ (AG_GLIBC_PREREQ(2,8) || (!AG_GLIBC_PREREQ(0,0) && __linux__))
 #define HAVE_SYS_EVENTFD_H ag_test_include(<sys/eventfd.h>, HAVE_SYS_EVENTFD_H_)
 #endif
 
@@ -498,7 +504,7 @@
 #endif
 
 #ifndef HAVE_SYS_SIGNALFD_H
-#define HAVE_SYS_SIGNALFD_H_ (AG_GLIBC_PREREQ(2,8) || (!AG_GLIBC_PREREQ(0,0) && __linux__) || defined SFD_CLOEXEC)
+#define HAVE_SYS_SIGNALFD_H_ (AG_GLIBC_PREREQ(2,8) || (!AG_GLIBC_PREREQ(0,0) && __linux__))
 #define HAVE_SYS_SIGNALFD_H ag_test_include(<sys/signalfd.h>, HAVE_SYS_SIGNALFD_H_)
 #endif
 
@@ -520,7 +526,7 @@
 #endif
 
 #ifndef HAVE_SYS_TIMERFD_H
-#define HAVE_SYS_TIMERFD_H_  (AG_GLIBC_PREREQ(2,8) || (!AG_GLIBC_PREREQ(0,0) && __linux__) || defined TFD_CLOEXEC)
+#define HAVE_SYS_TIMERFD_H_  (AG_GLIBC_PREREQ(2,8) || (!AG_GLIBC_PREREQ(0,0) && __linux__))
 #define HAVE_SYS_TIMERFD_H ag_test_include(<sys/timerfd.h>, HAVE_SYS_TIMERFD_H_)
 #endif
 
@@ -539,7 +545,7 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #ifndef HAVE_CLOCKID_T
-#define HAVE_CLOCKID_T (defined CLOCK_MONOTONIC)
+#define HAVE_CLOCKID_T HAVE_DECL_CLOCK_MONOTONIC
 #endif
 
 #ifndef HAVE_STRUCT_SOCKADDR_SA_LEN
@@ -604,6 +610,22 @@
 #define HAVE_DECL_CLOCK_REALTIME (defined CLOCK_REALTIME)
 #endif
 
+#ifndef HAVE_DECL_EFD_CLOEXEC
+#define HAVE_DECL_EFD_CLOEXEC (defined EFD_CLOEXEC)
+#endif
+
+#ifndef HAVE_DECL_EPOLL_CLOEXEC
+#define HAVE_DECL_EPOLL_CLOEXEC (defined EPOLL_CLOEXEC)
+#endif
+
+#ifndef HAVE_DECL_IN_CLOEXEC
+#define HAVE_DECL_IN_CLOEXEC (defined IN_CLOEXEC)
+#endif
+
+#ifndef HAVE_DECL_POSIX_FADV_NORMAL
+#define HAVE_DECL_POSIX_FADV_NORMAL (defined POSIX_FADV_NORMAL)
+#endif
+
 #ifndef HAVE_DECL_PROGRAM_INVOCATION_SHORT_NAME
 #define HAVE_DECL_PROGRAM_INVOCATION_SHORT_NAME (__linux__ && HAVE__GNU_SOURCE)
 #endif
@@ -613,7 +635,15 @@
 #endif
 
 #ifndef HAVE_DECL_RANDOM_UUID
-#define HAVE_DECL_RANDOM_UUID (HAVE_SYS_SYSCTL_H && defined __linux__) /* RANDOM_UUID is an enum, not macro */
+#define HAVE_DECL_RANDOM_UUID (HAVE_SYS_SYSCTL_H && __linux__) /* RANDOM_UUID is an enum, not macro */
+#endif
+
+#ifndef HAVE_DECL_SFD_CLOEXEC
+#define HAVE_DECL_SFD_CLOEXEC (defined SFD_CLOEXEC)
+#endif
+
+#ifndef HAVE_DECL_SOCK_CLOEXEC
+#define HAVE_DECL_SOCK_CLOEXEC (defined SOCK_CLOEXEC)
 #endif
 
 #ifndef HAVE_DECL_STRERROR_R
@@ -626,6 +656,10 @@
 
 #ifndef HAVE_DECL_SYS_GETRANDOM
 #define HAVE_DECL_SYS_GETRANDOM (defined SYS_getrandom)
+#endif
+
+#ifndef HAVE_DECL_TFD_CLOEXEC
+#define HAVE_DECL_TFD_CLOEXEC (defined TFD_CLOEXEC)
 #endif
 
 
@@ -653,7 +687,7 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #ifndef HAVE_ACCEPT4
-#define HAVE_ACCEPT4 (defined SOCK_CLOEXEC && !__NetBSD__)
+#define HAVE_ACCEPT4 (HAVE_DECL_SOCK_CLOEXEC && !__NetBSD__)
 #endif
 
 #ifndef HAVE_ARC4RANDOM
@@ -717,7 +751,7 @@
 #endif
 
 #ifndef HAVE_EPOLL_CREATE1
-#define HAVE_EPOLL_CREATE1 (HAVE_EPOLL_CREATE && (defined EPOLL_CLOEXEC || AG_GLIBC_PREREQ(2,9)))
+#define HAVE_EPOLL_CREATE1 (HAVE_EPOLL_CREATE && (HAVE_DECL_EPOLL_CLOEXEC || AG_GLIBC_PREREQ(2,9)))
 #endif
 
 #ifndef HAVE_EPOLL_CTL
@@ -725,7 +759,7 @@
 #endif
 
 #ifndef HAVE_EPOLL_PWAIT
-#define HAVE_EPOLL_PWAIT (HAVE_EPOLL_WAIT && (AG_GLIBC_PREREQ(2,6) || (!AG_GLIBC_PREREQ(0,0) && defined EPOLL_CLOEXEC)))
+#define HAVE_EPOLL_PWAIT (HAVE_EPOLL_WAIT && (AG_GLIBC_PREREQ(2,6) || (!AG_GLIBC_PREREQ(0,0) && HAVE_DECL_EPOLL_CLOEXEC)))
 #endif
 
 #ifndef HAVE_EPOLL_WAIT
@@ -733,7 +767,7 @@
 #endif
 
 #ifndef HAVE_EVENTFD
-#define HAVE_EVENTFD HAVE_SYS_EVENTFD_H
+#define HAVE_EVENTFD (HAVE_SYS_EVENTFD_H || HAVE_DECL_EFD_CLOEXEC)
 #endif
 
 #ifndef HAVE_GETAUXVAL
@@ -774,7 +808,7 @@
 #endif
 
 #ifndef HAVE_INOTIFY_INIT1
-#define HAVE_INOTIFY_INIT1 (HAVE_INOTIFY_INIT && defined IN_CLOEXEC)
+#define HAVE_INOTIFY_INIT1 (HAVE_INOTIFY_INIT && HAVE_DECL_IN_CLOEXEC)
 #endif
 
 #ifndef HAVE_ISSETUGID
@@ -852,7 +886,7 @@
 #endif
 
 #ifndef HAVE_POSIX_FADVISE
-#define HAVE_POSIX_FADVISE (defined POSIX_FADV_NORMAL || AG_GLIBC_PREREQ(2,2) || __sun || AG_MUSL_MAYBE || AG_FREEBSD_PREREQ(9,0,0))
+#define HAVE_POSIX_FADVISE (HAVE_DECL_POSIX_FADV_NORMAL || AG_GLIBC_PREREQ(2,2) || __sun || AG_MUSL_MAYBE || AG_FREEBSD_PREREQ(9,0,0))
 #endif
 
 #ifndef HAVE_POSIX_FALLOCATE
@@ -868,7 +902,7 @@
 #endif
 
 #ifndef HAVE_SIGNALFD
-#define HAVE_SIGNALFD HAVE_SYS_SIGNALFD_H
+#define HAVE_SIGNALFD (HAVE_SYS_SIGNALFD_H || HAVE_DECL_SFD_CLOEXEC)
 #endif
 
 #ifndef HAVE_SIGTIMEDWAIT
@@ -904,7 +938,7 @@
 #endif
 
 #ifndef HAVE_TIMERFD_CREATE
-#define HAVE_TIMERFD_CREATE HAVE_SYS_TIMERFD_H
+#define HAVE_TIMERFD_CREATE (HAVE_SYS_TIMERFD_H || HAVE_DECL_TFD_CLOEXEC)
 #endif
 
 #ifndef HAVE_TIMERFD_GETTIME
