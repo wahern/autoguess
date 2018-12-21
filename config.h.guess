@@ -635,7 +635,7 @@
 #endif
 
 #ifndef HAVE_DECL_RANDOM_UUID
-#define HAVE_DECL_RANDOM_UUID (HAVE_SYS_SYSCTL_H && defined __linux__) /* RANDOM_UUID is an enum, not macro */
+#define HAVE_DECL_RANDOM_UUID (HAVE_SYS_SYSCTL_H && __linux__) /* RANDOM_UUID is an enum, not macro */
 #endif
 
 #ifndef HAVE_DECL_SFD_CLOEXEC
