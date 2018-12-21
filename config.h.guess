@@ -487,7 +487,7 @@
 #endif
 
 #ifndef HAVE_SYS_EVENTFD_H
-#define HAVE_SYS_EVENTFD_H_ (AG_GLIBC_PREREQ(2,8) || (!AG_GLIBC_PREREQ(0,0) && __linux__) || defined EFD_CLOEXEC)
+#define HAVE_SYS_EVENTFD_H_ (AG_GLIBC_PREREQ(2,8) || (!AG_GLIBC_PREREQ(0,0) && __linux__))
 #define HAVE_SYS_EVENTFD_H ag_test_include(<sys/eventfd.h>, HAVE_SYS_EVENTFD_H_)
 #endif
 
@@ -504,7 +504,7 @@
 #endif
 
 #ifndef HAVE_SYS_SIGNALFD_H
-#define HAVE_SYS_SIGNALFD_H_ (AG_GLIBC_PREREQ(2,8) || (!AG_GLIBC_PREREQ(0,0) && __linux__) || defined SFD_CLOEXEC)
+#define HAVE_SYS_SIGNALFD_H_ (AG_GLIBC_PREREQ(2,8) || (!AG_GLIBC_PREREQ(0,0) && __linux__))
 #define HAVE_SYS_SIGNALFD_H ag_test_include(<sys/signalfd.h>, HAVE_SYS_SIGNALFD_H_)
 #endif
 
@@ -526,7 +526,7 @@
 #endif
 
 #ifndef HAVE_SYS_TIMERFD_H
-#define HAVE_SYS_TIMERFD_H_  (AG_GLIBC_PREREQ(2,8) || (!AG_GLIBC_PREREQ(0,0) && __linux__) || defined TFD_CLOEXEC)
+#define HAVE_SYS_TIMERFD_H_  (AG_GLIBC_PREREQ(2,8) || (!AG_GLIBC_PREREQ(0,0) && __linux__))
 #define HAVE_SYS_TIMERFD_H ag_test_include(<sys/timerfd.h>, HAVE_SYS_TIMERFD_H_)
 #endif
 
@@ -610,6 +610,10 @@
 #define HAVE_DECL_CLOCK_REALTIME (defined CLOCK_REALTIME)
 #endif
 
+#ifndef HAVE_DECL_EFD_CLOEXEC
+#define HAVE_DECL_EFD_CLOEXEC (defined EFD_CLOEXEC)
+#endif
+
 #ifndef HAVE_DECL_EPOLL_CLOEXEC
 #define HAVE_DECL_EPOLL_CLOEXEC (defined EPOLL_CLOEXEC)
 #endif
@@ -634,6 +638,10 @@
 #define HAVE_DECL_RANDOM_UUID (HAVE_SYS_SYSCTL_H && defined __linux__) /* RANDOM_UUID is an enum, not macro */
 #endif
 
+#ifndef HAVE_DECL_SFD_CLOEXEC
+#define HAVE_DECL_SFD_CLOEXEC (defined SFD_CLOEXEC)
+#endif
+
 #ifndef HAVE_DECL_SOCK_CLOEXEC
 #define HAVE_DECL_SOCK_CLOEXEC (defined SOCK_CLOEXEC)
 #endif
@@ -648,6 +656,10 @@
 
 #ifndef HAVE_DECL_SYS_GETRANDOM
 #define HAVE_DECL_SYS_GETRANDOM (defined SYS_getrandom)
+#endif
+
+#ifndef HAVE_DECL_TFD_CLOEXEC
+#define HAVE_DECL_TFD_CLOEXEC (defined TFD_CLOEXEC)
 #endif
 
 
@@ -755,7 +767,7 @@
 #endif
 
 #ifndef HAVE_EVENTFD
-#define HAVE_EVENTFD HAVE_SYS_EVENTFD_H
+#define HAVE_EVENTFD (HAVE_SYS_EVENTFD_H || HAVE_DECL_EFD_CLOEXEC)
 #endif
 
 #ifndef HAVE_GETAUXVAL
@@ -890,7 +902,7 @@
 #endif
 
 #ifndef HAVE_SIGNALFD
-#define HAVE_SIGNALFD HAVE_SYS_SIGNALFD_H
+#define HAVE_SIGNALFD (HAVE_SYS_SIGNALFD_H || HAVE_DECL_SFD_CLOEXEC)
 #endif
 
 #ifndef HAVE_SIGTIMEDWAIT
@@ -926,7 +938,7 @@
 #endif
 
 #ifndef HAVE_TIMERFD_CREATE
-#define HAVE_TIMERFD_CREATE HAVE_SYS_TIMERFD_H
+#define HAVE_TIMERFD_CREATE (HAVE_SYS_TIMERFD_H || HAVE_DECL_TFD_CLOEXEC)
 #endif
 
 #ifndef HAVE_TIMERFD_GETTIME
