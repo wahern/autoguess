@@ -500,7 +500,7 @@
 #define HAVE_SYS_RANDOM_H_APPLE_ ((__APPLE__ && defined SYS_getentropy) || AG_MACOS_PREREQ(10,12,0))
 #define HAVE_SYS_RANDOM_H_SUN_ (__sun && defined SYS_getrandom)
 #define HAVE_SYS_RANDOM_H_ (HAVE_SYS_RANDOM_H_SUN_ || HAVE_SYS_RANDOM_H_APPLE_)
-#define HAVE_SYS_RANDOM_H ag_test_include(<sys/random.h>, HAVE_SYS_RANDOM_H_)
+#define HAVE_SYS_RANDOM_H (ag_has_include(<sys/random.h) || (!HAVE_C___HAS_ATTRIBUTE && HAVE_SYS_RANDOM_H_))
 #endif
 
 #ifndef HAVE_SYS_SIGNALFD_H
