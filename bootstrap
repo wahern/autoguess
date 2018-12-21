@@ -1,5 +1,11 @@
 #!/bin/sh
 
+if [ "$(uname -s)" = "OpenBSD" ]; then
+	: "${AUTOCONF_VERSION:=2.69}"
+	: "${AUTOMAKE_VERSION:=1.16}"
+	export AUTOCONF_VERSION AUTOMAKE_VERSION
+fi
+
 trap "rm -fr autom4te.cache" EXIT
 aclocal
 autoheader
