@@ -34,7 +34,7 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #define AG_VENDOR  "william+autoguess@25thandClement.com"
-#define AG_VERSION 20181220L
+#define AG_VERSION 20190509L
 
 
 /*
@@ -697,7 +697,7 @@
 #endif
 
 #ifndef HAVE_ARC4RANDOM_ADDRANDOM
-#define HAVE_ARC4RANDOM_ADDRANDOM (HAVE_ARC4RANDOM && !AG_OPENBSD_PREREQ(5,5))
+#define HAVE_ARC4RANDOM_ADDRANDOM (HAVE_ARC4RANDOM && !AG_FREEBSD_PREREQ(12,0,0) && !AG_OPENBSD_PREREQ(5,5))
 #endif
 
 #ifndef HAVE_ARC4RANDOM_BUF
@@ -771,11 +771,11 @@
 #endif
 
 #ifndef HAVE_GETAUXVAL
-#define HAVE_GETAUXVAL (HAVE_SYS_AUXV_H && !__sun)
+#define HAVE_GETAUXVAL (HAVE_SYS_AUXV_H && !__sun && !__FreeBSD__)
 #endif
 
 #ifndef HAVE_GETENTROPY
-#define HAVE_GETENTROPY (AG_OPENBSD_PREREQ(5,6) || (HAVE_SYS_RANDOM_H && __sun) || AG_MACOS_PREREQ(10,12,0))
+#define HAVE_GETENTROPY (AG_OPENBSD_PREREQ(5,6) || (HAVE_SYS_RANDOM_H && __sun) || AG_MACOS_PREREQ(10,12,0) || AG_FREEBSD_PREREQ(12,0,0))
 #endif
 
 #ifndef HAVE_GETENV_R
@@ -795,7 +795,7 @@
 #endif
 
 #ifndef HAVE_GETRANDOM
-#define HAVE_GETRANDOM (HAVE_SYS_RANDOM_H && __sun)
+#define HAVE_GETRANDOM ((HAVE_SYS_RANDOM_H && __sun) || AG_FREEBSD_PREREQ(12,0,0))
 #endif
 
 #ifndef HAVE_FSTATAT
