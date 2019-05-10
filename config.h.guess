@@ -34,7 +34,7 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #define AG_VENDOR  "william+autoguess@25thandClement.com"
-#define AG_VERSION 20190509L
+#define AG_VERSION 20190510L
 
 
 /*
@@ -357,9 +357,11 @@
 #define AG_OPENBSD_PREREQ_5_7 (OpenBSD >= 201505)
 #define AG_OPENBSD_PREREQ(M, m) (AG_OPENBSD_PREREQ_ ## M ## _ ## m)
 
-#define AG_SUNOS_PREREQ_5_10 (__sun && _DTRACE_VERSION)
-#define AG_SUNOS_PREREQ_5_11 (__sun && F_DUPFD_CLOEXEC)
-#define AG_SUNOS_PREREQ(M, m) (AG_SUNOS_PREREQ_ ## M ## _ ## m)
+#define AG_SUNOS_PREREQ_5_10_0 (__sun && _DTRACE_VERSION)
+#define AG_SUNOS_PREREQ_5_11_0 (__sun && F_DUPFD_CLOEXEC)
+#define AG_SUNOS_PREREQ_5_11_3 (__sun && F_DUPFD_CLOFORK)
+#define AG_SUNOS_PREREQ_5_11_4 (__sun && F_DUP3FD)
+#define AG_SUNOS_PREREQ(M, m, p) (AG_SUNOS_PREREQ_ ## M ## _ ## m ## _ ## p)
 
 #define AG_UCLIBC_2VER(M, m, p) (((M) * 10000) + ((m) * 100) + (p))
 #if defined __UCLIBC__
@@ -424,7 +426,7 @@
 #endif
 
 #ifndef HAVE_IFADDRS_H
-#define HAVE_IFADDRS_H_ (!_AIX && (!__sun || AG_SUNOS_PREREQ(5,11)) && !_WIN32)
+#define HAVE_IFADDRS_H_ (!_AIX && (!__sun || AG_SUNOS_PREREQ(5,11,0)) && !_WIN32)
 #define HAVE_IFADDRS_H ag_test_include(<ifaddrs.h>, HAVE_IFADDRS_H_)
 #endif
 
@@ -449,7 +451,7 @@
 #endif
 
 #ifndef HAVE_PORT_H
-#define HAVE_PORT_H ag_test_include(<port.h>, AG_SUNOS_PREREQ(5,10))
+#define HAVE_PORT_H ag_test_include(<port.h>, AG_SUNOS_PREREQ(5,10,0))
 #endif
 
 /* TODO: Maybe test _POSIX_THREADS from <unistd.h>. */
@@ -693,7 +695,7 @@
 #ifndef HAVE_ARC4RANDOM
 #define HAVE_ARC4RANDOM \
 	(__APPLE__ || __DragonFly__ || __FreeBSD__ || __NetBSD__ || \
-	 __OpenBSD__ || __minix)
+	 __OpenBSD__ || __minix || AG_SUNOS_PREREQ(5,11,4))
 #endif
 
 #ifndef HAVE_ARC4RANDOM_ADDRANDOM
@@ -732,7 +734,7 @@
 #endif
 
 #ifndef HAVE_DUP3
-#define HAVE_DUP3 (AG_GLIBC_PREREQ(2,9) || AG_FREEBSD_PREREQ(10,0,0) || AG_NETBSD_PREREQ(6,0,0) || AG_UCLIBC_PREREQ(0,9,34) || AG_MUSL_MAYBE || __BIONIC__ || AG_OPENBSD_PREREQ(5,7))
+#define HAVE_DUP3 (AG_GLIBC_PREREQ(2,9) || AG_FREEBSD_PREREQ(10,0,0) || AG_NETBSD_PREREQ(6,0,0) || AG_UCLIBC_PREREQ(0,9,34) || AG_MUSL_MAYBE || __BIONIC__ || AG_OPENBSD_PREREQ(5,7) || AG_SUNOS_PREREQ(5,11,4))
 #endif
 
 #ifndef HAVE_FDOPENDIR
@@ -787,11 +789,11 @@
 #endif
 
 #ifndef HAVE_GETIFADDRS
-#define HAVE_GETIFADDRS (HAVE_IFADDRS_H && !__sun)
+#define HAVE_GETIFADDRS (HAVE_IFADDRS_H && (!__sun || AG_SUNOS_PREREQ(5,11,4)))
 #endif
 
 #ifndef HAVE_GETPROGNAME
-#define HAVE_GETPROGNAME (HAVE_ARC4RANDOM || AG_SUNOS_PREREQ(5,11))
+#define HAVE_GETPROGNAME (HAVE_ARC4RANDOM || AG_SUNOS_PREREQ(5,11,0))
 #endif
 
 #ifndef HAVE_GETRANDOM
@@ -850,7 +852,7 @@
 #endif
 
 #ifndef HAVE_PIPE2
-#define HAVE_PIPE2 (AG_GLIBC_PREREQ(2,9) || AG_FREEBSD_PREREQ(10,0,0) || AG_NETBSD_PREREQ(6,0,0) || AG_UCLIBC_PREREQ(0,9,32) || AG_MUSL_MAYBE || __BIONIC__ || AG_OPENBSD_PREREQ(5,7))
+#define HAVE_PIPE2 (AG_GLIBC_PREREQ(2,9) || AG_FREEBSD_PREREQ(10,0,0) || AG_NETBSD_PREREQ(6,0,0) || AG_UCLIBC_PREREQ(0,9,32) || AG_MUSL_MAYBE || __BIONIC__ || AG_OPENBSD_PREREQ(5,7) || AG_SUNOS_PREREQ(5,11,4))
 #endif
 
 #ifndef HAVE_PORT_ALERT
