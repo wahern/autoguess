@@ -10,7 +10,7 @@ config.h.auto: $(srcdir)/config.h.auto.in $(srcdir)/configure
 
 config-auto: config.c config.h.auto
 	cp config.h.auto config.h
-	$(CC) -o $@ config.c
+	$(CC) -o $@ config.c $(CFLAGS) $(CPPFLAGS)
 
 config-guess: config.c $(srcdir)/config.h.guess
 	cp $(srcdir)/config.h.guess config.h
