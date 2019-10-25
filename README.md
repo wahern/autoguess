@@ -1,10 +1,11 @@
 ## Introduction
 
 This project maintains a config.h-like header that implements feature
-detection solely via the preprocessor. It's regularly tested on recent
-versions of AIX, FreeBSD, Linux/glibc, Linux/musl, NetBSD, Minix, OpenBSD,
-and Solaris. Although not all feature tests are guaranteed to work on all
-tested platforms.
+detection solely via the preprocessor. It targets recent versions of AIX,
+FreeBSD, Linux/glibc, Linux/musl, NetBSD, macOS, OpenBSD, and Solaris; and
+recent versions of GCC, clang, and Oracle Developer Studio. The source
+should compile on other platforms and compilers, though with a greater
+chance of feature false negatives and false positives.
 
 ## Usage
 
@@ -57,3 +58,34 @@ To get the same behavior from autoconf paste the following to your
 	@%:@undef ]_m4_expand([$1])[
 	@%:@endif])])
 ```
+
+### -Wexpansion-to-defined
+
+```config.h``` is traditionally included in a source file _before_ any
+system headers so that it may enable/disable API personalities (see
+```AG_USE_SYSTEM_EXTENSIONS``` and ```AG_SYS_LARGEFILE``` above). However,
+some feature tests test the existence of particular macro definitions. To
+resolve this ordering dilemma without implicitly ```include```'ing
+unnecessary and unused platform headers, these feature tests inline the
+```defined``` operator for lazy evaluation at the point of use, after any
+required headers have been explicitly included by the source file.
+
+Technically, macro expansions that generate ```defined``` operator
+expressions constitute undefined behavior in ISO C. Support for this usage
+as an extension is widespread; even universal across major compilers. None
+of these compilers issued a diganostic for this usage in typical compilation
+environments (e.g. GCC requires ```-pedantic``` regardless of ```-std=```);
+not until clang 3.9 added ```-Wexpansion-to-defined``` as part of
+```-Wall```.
+
+Unfortunately, there's no other way around the ordering dilemma between
+feature test definition and system header inclusion. Nor is there a way to
+silence this diagnostic for feature tests without effecting the entire
+compilation unit.
+
+Going forward efforts will be made to minimize reliance on this behavior. In
+the meantime, users will either need to explicitly disable
+```-Wexpansion-to-defined``` or abstain from using those feature tests which
+rely on inline ```defined``` operator expansions. Note that it's only the
+expansion which is undefined behavior, not the mere definition of such a
+macro.
