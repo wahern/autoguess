@@ -61,6 +61,7 @@ AC_CHECK_DECLS([POSIX_FADV_NORMAL], [], [], [#include <fcntl.h>])
 AC_CHECK_DECLS([PTHREAD_MUTEX_ROBUST], [], [], [#include <pthread.h>])
 AC_CHECK_DECLS([RANDOM_UUID], [], [], [#include <sys/sysctl.h>])
 AC_CHECK_DECLS([SOCK_CLOEXEC], [], [], [#include <sys/socket.h>])
+AC_CHECK_DECLS([SYS_getentropy], [], [], [#include <sys/syscall.h>])
 AC_CHECK_DECLS([SYS_getrandom], [], [], [#include <sys/syscall.h>])
 
 # Checks for library objects.

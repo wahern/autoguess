@@ -499,8 +499,8 @@
 
 #ifndef HAVE_SYS_RANDOM_H
 /* NOTE: SYS_getentropy and SYS_getrandom require <sys/syscall.h> :( */
-#define HAVE_SYS_RANDOM_H_APPLE_ ((__APPLE__ && defined SYS_getentropy) || AG_MACOS_PREREQ(10,12,0))
-#define HAVE_SYS_RANDOM_H_SUN_ (__sun && defined SYS_getrandom)
+#define HAVE_SYS_RANDOM_H_APPLE_ ((__APPLE__ && HAVE_DECL_SYS_GETENTROPY) || AG_MACOS_PREREQ(10,12,0))
+#define HAVE_SYS_RANDOM_H_SUN_ (__sun && HAVE_DECL_SYS_GETRANDOM)
 #define HAVE_SYS_RANDOM_H_ (HAVE_SYS_RANDOM_H_SUN_ || HAVE_SYS_RANDOM_H_APPLE_)
 #define HAVE_SYS_RANDOM_H (ag_has_include(<sys/random.h>) || (!HAVE_C___HAS_ATTRIBUTE && HAVE_SYS_RANDOM_H_))
 #endif
@@ -652,12 +652,16 @@
 #define HAVE_DECL_STRERROR_R 1
 #endif
 
-#ifndef HAVE_DECL_SYS_SIGLIST
-#define HAVE_DECL_SYS_SIGLIST (!AG_MUSL_MAYBE && !__sun && !_AIX)
+#ifndef HAVE_DECL_SYS_GETENTROPY
+#define HAVE_DECL_SYS_GETENTROPY (defined SYS_getentropy)
 #endif
 
 #ifndef HAVE_DECL_SYS_GETRANDOM
 #define HAVE_DECL_SYS_GETRANDOM (defined SYS_getrandom)
+#endif
+
+#ifndef HAVE_DECL_SYS_SIGLIST
+#define HAVE_DECL_SYS_SIGLIST (!AG_MUSL_MAYBE && !__sun && !_AIX)
 #endif
 
 #ifndef HAVE_DECL_TFD_CLOEXEC
