@@ -669,7 +669,7 @@
 #endif
 
 #ifndef HAVE_DECL_SYS_SIGLIST
-#define HAVE_DECL_SYS_SIGLIST (!AG_MUSL_MAYBE && !__sun && !_AIX)
+#define HAVE_DECL_SYS_SIGLIST (!AG_MUSL_MAYBE && !__sun && !_AIX && !AG_GLIBC_PREREQ(2,32))
 #endif
 
 #ifndef HAVE_DECL_TFD_CLOEXEC
