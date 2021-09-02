@@ -463,6 +463,10 @@
 #define HAVE_STDINT_H 1
 #endif
 
+#ifndef HAVE_STDIO_H
+#define HAVE_STDIO_H 1
+#endif
+
 #ifndef HAVE_STDLIB_H
 #define HAVE_STDLIB_H 1
 #endif
@@ -538,6 +542,10 @@
 
 #ifndef HAVE_UNISTD_H
 #define HAVE_UNISTD_H (!_WIN32)
+#endif
+
+#ifndef HAVE_WCHAR_H
+#define HAVE_WCHAR_H 1
 #endif
 
 

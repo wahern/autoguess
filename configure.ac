@@ -38,10 +38,28 @@ AC_SEARCH_LIBS([dlopen], [dl])
 
 # Checks for header files.
 AC_CHECK_HEADERS([m4_normalize([
-	dlfcn.h ifaddrs.h mach/mach.h mach/clock.h mach/mach_time.h
-	netinet/in6_var.h port.h pthread.h sys/auxv.h sys/epoll.h
-	sys/event.h sys/eventfd.h sys/inotify.h sys/param.h sys/random.h
-	sys/signalfd.h sys/sockio.h sys/syscall.h sys/sysctl.h sys/timerfd.h
+	dlfcn.h
+	ifaddrs.h
+	mach/mach.h
+	mach/clock.h
+	mach/mach_time.h
+	memory.h
+	netinet/in6_var.h
+	port.h
+	pthread.h
+	stdio.h
+	sys/auxv.h
+	sys/epoll.h
+	sys/event.h
+	sys/eventfd.h
+	sys/inotify.h
+	sys/param.h
+	sys/random.h
+	sys/signalfd.h
+	sys/sockio.h
+	sys/syscall.h
+	sys/sysctl.h
+	sys/timerfd.h
 ])])
 
 # Checks for types.
