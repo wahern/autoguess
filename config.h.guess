@@ -1,7 +1,7 @@
 /* ==========================================================================
  * config.h.guess - Preprocessor-based feature detection
  * --------------------------------------------------------------------------
- * Copyright (c) 2015-2019  William Ahern
+ * Copyright (c) 2015-2019,2021  William Ahern
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
@@ -34,7 +34,7 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #define AG_VENDOR  "william+autoguess@25thandClement.com"
-#define AG_VERSION 20191024L
+#define AG_VERSION 20210901L
 
 
 /*
