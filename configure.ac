@@ -60,6 +60,7 @@ AC_CHECK_HEADERS([m4_normalize([
 	sys/syscall.h
 	sys/sysctl.h
 	sys/timerfd.h
+	wchar.h
 ])])
 
 # Checks for types.
