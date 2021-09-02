@@ -71,5 +71,6 @@ check: config-auto.txt config-guess.txt
 	fi
 
 clean:
-	rm -f *.txt config.c config.h config.h.auto config-auto config-guess
-
+	rm -f config.c config.h config.h.auto config.h.auto.in
+	rm -f configure aclocal.m4 config.log config.status
+	rm -f config-auto config-auto.txt config-guess config-guess.txt
