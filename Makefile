@@ -1,20 +1,26 @@
 srcdir=.
 
+WARN_CFLAGS = -Wno-expansion-to-defined
+WARN_CPPFLAGS =
+
+ALL_CFLAGS = $(WARN_CFLAGS) $(CFLAGS) $(MYCFLAGS)
+ALL_CPPFLAGS = $(WARN_CPPFLAGS) $(CPPFLAGS) $(MYCPPFLAGS)
+
 all: config-auto config-guess
 
 $(srcdir)/config.h.auto.in $(srcdir)/configure: $(srcdir)/configure.ac $(srcdir)/ag_check_cc.m4
 	cd $(srcdir) && ./bootstrap
 
 config.h.auto: $(srcdir)/config.h.auto.in $(srcdir)/configure
-	$(srcdir)/configure CC="$(CC)" CFLAGS="$(CFLAGS)" CPPFLAGS="$(CPPFLAGS)"
+	$(srcdir)/configure CC="$(CC)" CFLAGS="$(ALL_CFLAGS)" CPPFLAGS="$(ALL_CPPFLAGS)"
 
 config-auto: config.c config.h.auto
 	cp config.h.auto config.h
-	$(CC) -o $@ config.c $(CFLAGS) $(CPPFLAGS)
+	$(CC) -o $@ config.c $(ALL_CFLAGS) $(ALL_CPPFLAGS)
 
 config-guess: config.c $(srcdir)/config.h.guess
 	cp $(srcdir)/config.h.guess config.h
-	$(CC) -o $@ config.c -DAG_USE_SYSTEM_EXTENSIONS -DAG_SYS_LARGEFILE $(CPPFLAGS) $(CFLAGS)
+	$(CC) -o $@ config.c -DAG_USE_SYSTEM_EXTENSIONS -DAG_SYS_LARGEFILE $(ALL_CPPFLAGS) $(ALL_CFLAGS)
 
 config.c: config.h.auto
 	-@rm -f $@
