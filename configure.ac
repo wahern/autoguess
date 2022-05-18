@@ -37,7 +37,7 @@ AC_SEARCH_LIBS([posix_fallocate], [rt])
 AC_SEARCH_LIBS([dlopen], [dl])
 
 # Checks for header files.
-AC_CHECK_HEADERS([m4_normalize([
+AC_CHECK_HEADERS(m4_normalize([
 	dlfcn.h
 	ifaddrs.h
 	mach/mach.h
@@ -61,7 +61,7 @@ AC_CHECK_HEADERS([m4_normalize([
 	sys/sysctl.h
 	sys/timerfd.h
 	wchar.h
-])])
+]))
 
 # Checks for types.
 AC_CHECK_TYPES([clockid_t], [], [], [#include <time.h>])
@@ -94,7 +94,7 @@ AC_CHECK_DECLS([sys_siglist], [], [], [#include <signal.h>])
 AC_CHECK_FUNCS([sys_siglist])
 
 # Checks for library functions.
-AC_CHECK_FUNCS([m4_normalize([
+AC_CHECK_FUNCS(m4_normalize([
 	accept4
 	arc4random
 	arc4random_addrandom
@@ -154,7 +154,7 @@ AC_CHECK_FUNCS([m4_normalize([
 	timerfd_gettime
 	timerfd_settime
 	unlinkat
-])])
+]))
 
 # Check for strerror_r and variant.
 AC_FUNC_STRERROR_R
