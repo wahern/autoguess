@@ -101,6 +101,7 @@ AC_CHECK_FUNCS(m4_normalize([
 	arc4random_buf
 	arc4random_stir
 	clock_gettime
+	consttime_memequal
 	dladdr
 	dlopen
 	dlsym
@@ -113,6 +114,8 @@ AC_CHECK_FUNCS(m4_normalize([
 	epoll_pwait
 	epoll_wait
 	eventfd
+	explicit_bzero
+	explicit_memset
 	getauxval
 	getentropy
 	getenv_r
@@ -127,6 +130,7 @@ AC_CHECK_FUNCS(m4_normalize([
 	kevent
 	kqueue
 	kqueue1
+	memset_s
 	mkdirat
 	mkfifoat
 	openat
@@ -153,6 +157,8 @@ AC_CHECK_FUNCS(m4_normalize([
 	timerfd_create
 	timerfd_gettime
 	timerfd_settime
+	timingsafe_bcmp
+	timingsafe_memcmp
 	unlinkat
 ]))
 
