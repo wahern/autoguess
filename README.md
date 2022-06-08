@@ -41,7 +41,7 @@ However, ```config.h``` typically must be included _before_ any other system
 header so that system extensions and largefile support can be enabled. This
 means evaluation of the feature predicates must be delayed until actually
 used by the application code when the relevant headers have already been
-included.
+included. (See [-Wexpansion-to-defined](#-wexpansion-to-defined) below.)
 
 * So that feature tests may be overriden from compiler flags. For example,
 to override a positive feature test one can specify -DHAVE_FOO=0. Specifying
@@ -72,11 +72,15 @@ required headers have been explicitly included by the source file.
 
 Technically, macro expansions that generate ```defined``` operator
 expressions constitute undefined behavior in ISO C. Support for this usage
-as an extension is widespread; even universal across major compilers. None
-of these compilers issued a diganostic for this usage in typical compilation
+as an extension is widespread; universal across Unix compilers. None of
+these compilers issued a diganostic for this usage in typical compilation
 environments (e.g. GCC requires ```-pedantic``` regardless of ```-std=```);
 not until clang 3.9 added ```-Wexpansion-to-defined``` as part of
 ```-Wall```.
+(Microsoft Visual Studio is the exception, at least for object-like macros.
+See [this thread](https://bugs.webkit.org/show_bug.cgi?id=167643) discussing
+Visual Studio's different behaviors between function-like and object-like
+macros.)
 
 Unfortunately, there's no other way around the ordering dilemma between
 feature test definition and system header inclusion. Nor is there a way to
@@ -84,8 +88,8 @@ silence this diagnostic for feature tests without effecting the entire
 compilation unit.
 
 Going forward efforts will be made to minimize reliance on this behavior. In
-the meantime, users will either need to explicitly disable
-```-Wexpansion-to-defined``` or abstain from using those feature tests which
-rely on inline ```defined``` operator expansions. Note that it's only the
-expansion which is undefined behavior, not the mere definition of such a
-macro.
+the meantime, users should either explicitly disable their compiler's
+```-Wexpansion-to-defined``` diagnostic, or abstain from using those feature
+tests which rely on inline ```defined``` operator expansions. Note that it's
+only the expansion which is undefined behavior, not the mere definition of
+such a macro.
