@@ -1,11 +1,13 @@
 ## Introduction
 
 This project maintains a config.h-like header that implements feature
-detection solely via the preprocessor. It targets recent versions of AIX,
-FreeBSD, Linux/glibc, Linux/musl, NetBSD, macOS, OpenBSD, and Solaris; and
-recent versions of GCC, clang, and Oracle Developer Studio. The source
-should compile on other platforms and compilers, though with a greater
-chance of feature false negatives and false positives.
+detection solely via the preprocessor. It targets recent versions of
+DragonFly BSD, FreeBSD, Linux/glibc, Linux/musl, NetBSD, macOS, OpenBSD, and
+Solaris; and recent versions of GCC, clang, and Oracle Developer Studio.
+(AIX support is frozen at 7.1 and not presently updated since the loss of
+Polar Home's AIX environment.) The source should compile on other platforms
+and compilers, though with a greater chance of feature false negatives and
+false positives.
 
 ## Usage
 
