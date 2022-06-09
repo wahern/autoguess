@@ -34,7 +34,7 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #define AG_VENDOR  "william+autoguess@25thandClement.com"
-#define AG_VERSION 20220608L
+#define AG_VERSION 20220609L
 
 
 /*
@@ -318,6 +318,9 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #define AG_AIX_PREREQ(M, m) (_AIX # M # m)
+
+#define AG_DRAGONFLY_2VER(M, m, p) (((M) * 100000) + ((m) * 100) + (p))
+#define AG_DRAGONFLY_PREREQ(M, m, p) (__DragonFly__ > 0 && __DragonFly_version >= AG_DRAGONFLY_2VER((M), (m), (p)))
 
 #if defined __GLIBC_PREREQ && !defined __UCLIBC__
 #define AG_GLIBC_PREREQ(M, m) (__GLIBC_PREREQ(M, m))
@@ -752,7 +755,7 @@
 #endif
 
 #ifndef HAVE_DUP3
-#define HAVE_DUP3 (AG_GLIBC_PREREQ(2,9) || AG_FREEBSD_PREREQ(10,0,0) || AG_NETBSD_PREREQ(6,0,0) || AG_UCLIBC_PREREQ(0,9,34) || AG_MUSL_MAYBE || __BIONIC__ || AG_OPENBSD_PREREQ(5,7) || AG_SUNOS_PREREQ(5,11,4))
+#define HAVE_DUP3 (AG_GLIBC_PREREQ(2,9) || AG_DRAGONFLY_PREREQ(5,5,0) || AG_FREEBSD_PREREQ(10,0,0) || AG_NETBSD_PREREQ(6,0,0) || AG_UCLIBC_PREREQ(0,9,34) || AG_MUSL_MAYBE || __BIONIC__ || AG_OPENBSD_PREREQ(5,7) || AG_SUNOS_PREREQ(5,11,4))
 #endif
 
 #ifndef HAVE_FDOPENDIR
@@ -791,7 +794,7 @@
 #endif
 
 #ifndef HAVE_EXPLICIT_BZERO
-#define HAVE_EXPLICIT_BZERO (__OpenBSD__ || AG_FREEBSD_PREREQ(11,0,0) || AG_GLIBC_PREREQ(2,25) || (AG_MUSL_MAYBE && HAVE__GNU_SOURCE))
+#define HAVE_EXPLICIT_BZERO (__OpenBSD__ || AG_DRAGONFLY_PREREQ(5,5,0) || AG_FREEBSD_PREREQ(11,0,0) || AG_GLIBC_PREREQ(2,25) || (AG_MUSL_MAYBE && HAVE__GNU_SOURCE))
 #endif
 
 #ifndef HAVE_EXPLICIT_MEMSET
@@ -804,7 +807,7 @@
 
 #ifndef HAVE_GETENTROPY
 #define AG_HAVE_GETENTROPY_LINUX AG_HAVE_GETRANDOM_LINUX
-#define HAVE_GETENTROPY (AG_OPENBSD_PREREQ(5,6) || (HAVE_SYS_RANDOM_H && __sun) || AG_MACOS_PREREQ(10,12,0) || AG_FREEBSD_PREREQ(12,0,0) || AG_HAVE_GETENTROPY_LINUX)
+#define HAVE_GETENTROPY (AG_OPENBSD_PREREQ(5,6) || (HAVE_SYS_RANDOM_H && __sun) || AG_MACOS_PREREQ(10,12,0) || AG_FREEBSD_PREREQ(12,0,0) || AG_HAVE_GETENTROPY_LINUX || AG_DRAGONFLY_PREREQ(6,1,0))
 #endif
 
 #ifndef HAVE_GETENV_R
@@ -829,7 +832,7 @@
  * getrandom and getentropy bindings in the same release as <sys/random.h>.
  */
 #define AG_HAVE_GETRANDOM_LINUX (__linux__ && HAVE_SYS_RANDOM_H)
-#define HAVE_GETRANDOM ((HAVE_SYS_RANDOM_H && __sun) || AG_FREEBSD_PREREQ(12,0,0) || AG_HAVE_GETRANDOM_LINUX)
+#define HAVE_GETRANDOM ((HAVE_SYS_RANDOM_H && __sun) || AG_FREEBSD_PREREQ(12,0,0) || AG_HAVE_GETRANDOM_LINUX || AG_DRAGONFLY_PREREQ(5,7,0))
 #endif
 
 #ifndef HAVE_FSTATAT
@@ -872,7 +875,7 @@
 #endif
 
 #ifndef HAVE_MEMSET_S
-#define HAVE_MEMSET_S ((__APPLE__ && __STDC_WANT_LIB_EXT1__ > 0) || (__FreeBSD__ && __EXT1_VISIBLE) || AG_SUNOS_PREREQ(5,11,4))
+#define HAVE_MEMSET_S ((__APPLE__ && __STDC_WANT_LIB_EXT1__ > 0) || (__DragonFly__ && __EXT1_VISIBLE) || (__FreeBSD__ && __EXT1_VISIBLE) || AG_SUNOS_PREREQ(5,11,4))
 #endif
 
 #ifndef HAVE_MKDIRAT
@@ -888,7 +891,7 @@
 #endif
 
 #ifndef HAVE_PIPE2
-#define HAVE_PIPE2 (AG_GLIBC_PREREQ(2,9) || AG_FREEBSD_PREREQ(10,0,0) || AG_NETBSD_PREREQ(6,0,0) || AG_UCLIBC_PREREQ(0,9,32) || AG_MUSL_MAYBE || __BIONIC__ || AG_OPENBSD_PREREQ(5,7) || AG_SUNOS_PREREQ(5,11,4))
+#define HAVE_PIPE2 (AG_GLIBC_PREREQ(2,9) || AG_DRAGONFLY_PREREQ(4,2,0) || AG_FREEBSD_PREREQ(10,0,0) || AG_NETBSD_PREREQ(6,0,0) || AG_UCLIBC_PREREQ(0,9,32) || AG_MUSL_MAYBE || __BIONIC__ || AG_OPENBSD_PREREQ(5,7) || AG_SUNOS_PREREQ(5,11,4))
 #endif
 
 #ifndef HAVE_PORT_ALERT
@@ -928,7 +931,7 @@
 #endif
 
 #ifndef HAVE_POSIX_FALLOCATE
-#define HAVE_POSIX_FALLOCATE (_AIX || AG_FREEBSD_PREREQ(9,0,0) || AG_GLIBC_PREREQ(2,2) || AG_MUSL_MAYBE || AG_NETBSD_PREREQ(7,0,0) || __sun)
+#define HAVE_POSIX_FALLOCATE (_AIX || AG_DRAGONFLY_PREREQ(6,1,0) || AG_FREEBSD_PREREQ(9,0,0) || AG_GLIBC_PREREQ(2,2) || AG_MUSL_MAYBE || AG_NETBSD_PREREQ(7,0,0) || __sun)
 #endif
 
 #ifndef HAVE_READLINKAT
@@ -988,12 +991,12 @@
 #endif
 
 #ifndef HAVE_TIMINGSAFE_BCMP
-#define HAVE_TIMINGSAFE_BCMP (__OpenBSD__ || AG_FREEBSD_PREREQ(12,0,0) || AG_MACOS_PREREQ(10,12,1) || AG_SUNOS_PREREQ(5,11,4))
+#define HAVE_TIMINGSAFE_BCMP (__OpenBSD__ || AG_DRAGONFLY_PREREQ(5,6,0) || AG_FREEBSD_PREREQ(12,0,0) || AG_MACOS_PREREQ(10,12,1) || AG_SUNOS_PREREQ(5,11,4))
 #endif
 
 #ifndef HAVE_TIMINGSAFE_MEMCMP
 /* NOTE: macOS has timingsafe_bcmp but not timingsafe_memset */
-#define HAVE_TIMINGSAFE_MEMCMP (__OpenBSD__ || AG_FREEBSD_PREREQ(12,0,0) || AG_SUNOS_PREREQ(5,11,4))
+#define HAVE_TIMINGSAFE_MEMCMP (__OpenBSD__ || AG_DRAGONFLY_PREREQ(5,6,0) || AG_FREEBSD_PREREQ(12,0,0) || AG_SUNOS_PREREQ(5,11,4))
 #endif
 
 #ifndef HAVE_UNLINKAT
