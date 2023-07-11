@@ -344,6 +344,7 @@
 #define AG_NETBSD_PREREQ(M, m, p) 0
 #endif
 
+/* 2023-07-10: see AvailabilityVersions.h for version format transitions */
 #define AG_MACOS_2VER_10_9(M, m, p) (((M) * 100) + ((m) * 10))
 #define AG_MACOS_2VER_10_10(M, m, p) (((M) * 10000) + ((m) * 100) + (p))
 #define AG_MACOS_PREREQ_10_10(M, m, p) (((M) > 10 || ((M) == 10 && (m) >= 10)) && AG_MACOS_2VER_10_10((M), (m), (p)) <= __MAC_OS_X_VERSION_MIN_REQUIRED)
@@ -883,7 +884,7 @@
 #endif
 
 #ifndef HAVE_MKFIFOAT
-#define HAVE_MKFIFOAT (!__APPLE__ && (!__NetBSD__ || AG_NETBSD_PREREQ(7,0,0)))
+#define HAVE_MKFIFOAT ((!__APPLE__ || AG_MACOS_PREREQ(13,0,0) || AG_IPHONE_PREREQ(16,0)) && (!__NetBSD__ || AG_NETBSD_PREREQ(7,0,0)))
 #endif
 
 #ifndef HAVE_PACCEPT
