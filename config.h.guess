@@ -1,7 +1,7 @@
 /* ==========================================================================
  * config.h.guess - Preprocessor-based feature detection
  * --------------------------------------------------------------------------
- * Copyright (c) 2015-2019,2021-2022  William Ahern
+ * Copyright (c) 2015-2019,2021-2023  William Ahern
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
@@ -34,7 +34,7 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #define AG_VENDOR  "william+autoguess@25thandClement.com"
-#define AG_VERSION 20230711L
+#define AG_VERSION 20230805L
 
 
 /*
@@ -392,6 +392,12 @@
 #ifndef HAVE__ALL_SOURCE
 #ifdef _ALL_SOURCE
 #define HAVE__ALL_SOURCE 1
+#endif
+#endif
+
+#ifndef HAVE__BSD_SOURCE
+#ifdef _BSD_SOURCE
+#define HAVE__BSD_SOURCE 1
 #endif
 #endif
 
@@ -795,7 +801,7 @@
 #endif
 
 #ifndef HAVE_EXPLICIT_BZERO
-#define HAVE_EXPLICIT_BZERO (__OpenBSD__ || AG_DRAGONFLY_PREREQ(5,5,0) || AG_FREEBSD_PREREQ(11,0,0) || AG_GLIBC_PREREQ(2,25) || (AG_MUSL_MAYBE && HAVE__GNU_SOURCE))
+#define HAVE_EXPLICIT_BZERO (__OpenBSD__ || AG_DRAGONFLY_PREREQ(5,5,0) || AG_FREEBSD_PREREQ(11,0,0) || AG_GLIBC_PREREQ(2,25) || (AG_MUSL_MAYBE && (HAVE__BSD_SOURCE || HAVE__GNU_SOURCE)))
 #endif
 
 #ifndef HAVE_EXPLICIT_MEMSET
@@ -850,7 +856,7 @@
 #endif
 
 #ifndef HAVE_ISSETUGID
-#define HAVE_ISSETUGID ((!__linux__ || (AG_MUSL_MAYBE && HAVE__GNU_SOURCE)) && !_AIX)
+#define HAVE_ISSETUGID ((!__linux__ || (AG_MUSL_MAYBE && (HAVE__BSD_SOURCE || HAVE__GNU_SOURCE))) && !_AIX)
 #endif
 
 #if HAVE_SYS_EVENT_H
@@ -965,6 +971,14 @@
 
 #ifndef HAVE_STRERROR_R
 #define HAVE_STRERROR_R 1
+#endif
+
+#ifndef HAVE_STRLCAT
+#define HAVE_STRLCAT (BSD || __sun || (AG_MUSL_MAYBE && (HAVE__BSD_SOURCE || HAVE__GNU_SOURCE)) || AG_GLIBC_PREREQ(2,38) || (_POSIX_C_SOURCE >= 202300L || _XOPEN_SOURCE >= 800))
+#endif
+
+#ifndef HAVE_STRLCPY
+#define HAVE_STRLCPY HAVE_STRLCAT
 #endif
 
 #ifndef HAVE_SYMLINKAT

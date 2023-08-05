@@ -151,6 +151,8 @@ AC_CHECK_FUNCS(m4_normalize([
 	signalfd
 	sigtimedwait
 	sigwait
+	strlcat
+	strlcpy
 	symlinkat
 	syscall
 	sysctl
