@@ -34,7 +34,7 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #define AG_VENDOR  "william+autoguess@25thandClement.com"
-#define AG_VERSION 20230805L
+#define AG_VERSION 20250602L
 
 
 /*
@@ -717,13 +717,20 @@
 #endif
 
 #ifndef HAVE_ARC4RANDOM
-#define HAVE_ARC4RANDOM \
-	(__APPLE__ || __DragonFly__ || __FreeBSD__ || __NetBSD__ || \
-	 __OpenBSD__ || __minix || AG_SUNOS_PREREQ(5,11,4))
+#define HAVE_ARC4RANDOM (0 \
+	|| __APPLE__ \
+	|| __DragonFly__ \
+	|| __FreeBSD__ \
+	|| AG_GLIBC_PREREQ(2,36) \
+	|| __minix \
+	|| __NetBSD__ \
+	|| __OpenBSD__ \
+	|| AG_SUNOS_PREREQ(5,11,4) \
+	)
 #endif
 
 #ifndef HAVE_ARC4RANDOM_ADDRANDOM
-#define HAVE_ARC4RANDOM_ADDRANDOM (HAVE_ARC4RANDOM && !AG_FREEBSD_PREREQ(12,0,0) && !AG_OPENBSD_PREREQ(5,5))
+#define HAVE_ARC4RANDOM_ADDRANDOM (HAVE_ARC4RANDOM && !AG_FREEBSD_PREREQ(12,0,0) && !__GLIBC__ && !AG_OPENBSD_PREREQ(5,5))
 #endif
 
 #ifndef HAVE_ARC4RANDOM_BUF
@@ -830,7 +837,15 @@
 #endif
 
 #ifndef HAVE_GETPROGNAME
-#define HAVE_GETPROGNAME (HAVE_ARC4RANDOM || AG_SUNOS_PREREQ(5,11,0))
+#define HAVE_GETPROGNAME (0 \
+	|| __APPLE__ \
+	|| __DragonFly__ \
+	|| __FreeBSD__ \
+	|| __minix \
+	|| __NetBSD__ \
+	|| __OpenBSD__ \
+	|| AG_SUNOS_PREREQ(5,11,0) \
+	)
 #endif
 
 #ifndef HAVE_GETRANDOM
