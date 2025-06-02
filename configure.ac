@@ -123,6 +123,7 @@ AC_CHECK_FUNCS(m4_normalize([
 	getifaddrs
 	getprogname
 	getrandom
+	fmemopen
 	fstatat
 	inotify_init
 	inotify_init1
@@ -134,6 +135,7 @@ AC_CHECK_FUNCS(m4_normalize([
 	mkdirat
 	mkfifoat
 	openat
+	open_memstream
 	paccept
 	pipe2
 	port_alert
