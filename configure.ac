@@ -123,7 +123,6 @@ AC_CHECK_FUNCS(m4_normalize([
 	getifaddrs
 	getprogname
 	getrandom
-	fmemopen
 	fstatat
 	inotify_init
 	inotify_init1
@@ -133,9 +132,7 @@ AC_CHECK_FUNCS(m4_normalize([
 	kqueue1
 	memset_s
 	mkdirat
-	mkfifoat
 	openat
-	open_memstream
 	paccept
 	pipe2
 	port_alert
@@ -168,5 +165,53 @@ AC_CHECK_FUNCS(m4_normalize([
 
 # Check for strerror_r and variant.
 AC_FUNC_STRERROR_R
+
+# Checks for library functions that require special treatment.
+#
+# Mostly for handling backward macOS compatibility; avoiding false positives
+# when relying on -mmacosx-version-min with SDKs newer than the minimum
+# version specific, where SDK linking may succeed despite the version
+# request. See https://smallhacks.wordpress.com/2018/11/11/how-to-support-old-osx-version-with-a-recent-xcode/
+AC_MSG_CHECKING([for fmemopen])
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <stdio.h>]], [[
+	#if __APPLE__
+	#pragma GCC diagnostic error "-Wpartial-availability"
+	#endif
+	char buf[100];
+	return (0 != fmemopen(buf, sizeof buf, "w"))? 0 : 1;
+]])], [
+	AC_DEFINE([HAVE_FMEMOPEN], [1], [Define if fmemopen exists.])
+	AC_MSG_RESULT([yes])
+], [
+	AC_MSG_RESULT([no])
+])
+
+AC_MSG_CHECKING([for mkfifoat])
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <sys/stat.h>]], [[
+	#if __APPLE__
+	#pragma GCC diagnostic error "-Wpartial-availability"
+	#endif
+	return (0 == mkfifoat(-1, "nonexistent", 0666))? 0 : 1;
+]])], [
+	AC_DEFINE([HAVE_MKFIFOAT], [1], [Define if mkfifoat exists.])
+	AC_MSG_RESULT([yes])
+], [
+	AC_MSG_RESULT([no])
+])
+
+AC_MSG_CHECKING([for open_memstream])
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <stdio.h>]], [[
+	#if __APPLE__
+	#pragma GCC diagnostic error "-Wpartial-availability"
+	#endif
+	char *buf = NULL;
+	size_t bufsiz = 0;
+	return (0 != open_memstream(&buf, &bufsiz))? 0 : 1;
+]])], [
+	AC_DEFINE([HAVE_OPEN_MEMSTREAM], [1], [Define if open_memstream exists.])
+	AC_MSG_RESULT([yes])
+], [
+	AC_MSG_RESULT([no])
+])
 
 AC_OUTPUT
