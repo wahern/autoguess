@@ -1,5 +1,10 @@
 srcdir=.
 
+MACOSX_DEPLOYMENT_TARGET =
+CFLAGS.darwin = $(MACOSX_DEPLOYMENT_TARGET:%=-mmacosx-version-min=%)
+CFLAGS = $(CFLAGS.$(OS))
+CPPFLAGS =
+
 WARN_CFLAGS = -Wno-expansion-to-defined
 WARN_CPPFLAGS =
 
@@ -86,3 +91,5 @@ clean:
 	rm -f config.c config.h config.h.auto config.h.auto.in
 	rm -f configure aclocal.m4 config.log config.status
 	rm -f config-auto config-auto.txt config-guess config-guess.txt
+
+include $(srcdir)/Makefile.guess.sub
