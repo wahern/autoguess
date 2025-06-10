@@ -31,13 +31,13 @@ config.c: config.h.auto
 	-@rm -f $@
 	@cat config.h.auto $(srcdir)/config.h.guess | \
 	sed -ne 's/^.*\(HAVE_[0-9A-Za-z_]*\).*$$/\1/p' | \
-	sed -e ' \
-		/_H_$$/d; \
-		/_H_[A-Z][A-Z]*_$$/d; \
-		/ARC4RANDOM_.*_$$/d; \
-		/_IFF_$$/d; \
-		/_IFF_[A-Z][A-Z]*_$$/d; \
-	' | \
+	sed -e " \
+		/_H_\$$/d; \
+		/_H_[A-Z][A-Z]*_\$$/d; \
+		/ARC4RANDOM_.*_\$$/d; \
+		/_IFF_\$$/d; \
+		/_IFF_[A-Z][A-Z]*_\$$/d; \
+	" | \
 	sort -u | \
 	awk '$$1!~/^HAVE_(__EXTENSIONS__|_ALL_SOURCE|_BSD_SOURCE|_GNU_SOURCE|_MINIX|_POSIX_PTHREAD_SEMANTICS|_REENTRANT)$$/ { print $$1; }' | \
 	(cat; printf "STRERROR_R_CHAR_P") | awk ' \
