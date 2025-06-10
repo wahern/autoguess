@@ -518,7 +518,7 @@
 #define HAVE_SYS_RANDOM_H_LINUX_ (AG_GLIBC_PREREQ(2,25) || (!AG_GLIBC_PREREQ(0,0) && __linux__))
 #define HAVE_SYS_RANDOM_H_SUN_ (__sun && HAVE_DECL_SYS_GETRANDOM)
 #define HAVE_SYS_RANDOM_H_ (HAVE_SYS_RANDOM_H_APPLE_ || HAVE_SYS_RANDOM_H_LINUX_ || HAVE_SYS_RANDOM_H_SUN_)
-#define HAVE_SYS_RANDOM_H (ag_has_include(<sys/random.h>) || (!HAVE_C___HAS_ATTRIBUTE && HAVE_SYS_RANDOM_H_))
+#define HAVE_SYS_RANDOM_H ag_test_include(<sys/random.h>, HAVE_SYS_RANDOM_H_)
 #endif
 
 #ifndef HAVE_SYS_SIGNALFD_H
