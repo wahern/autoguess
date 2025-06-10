@@ -1,5 +1,7 @@
 srcdir=.
 
+# NB: As of 2025-06-10 only macOS 11.0+ targets will be verified (i.e. if
+# available in macOS 11.0, then config.h.guess simply tests for __APPLE__)
 MACOSX_DEPLOYMENT_TARGET =
 CFLAGS.darwin = $(MACOSX_DEPLOYMENT_TARGET:%=-mmacosx-version-min=%)
 CFLAGS = $(CFLAGS.$(OS))
